@@ -40,7 +40,7 @@ Even though `get_weather()` gives the agent access to reliable data, hallucinati
 
 ![Sequence diagram showing vulnerability in a weather agent. The user asks "What's the weather in Chicago?", the LLM generates a tool call get_weather(lat = 41.8, long = -87.6) marked as "VULNERABLE" because the coordinates are AI-generated, the tool returns correct data (temperature: 72, weather: Sunny), but the LLM hallucinates a completely different response: "It's 50 degrees Fahrenheit and rainy in Indianapolis."](./images/hallucinations/hallucination1.png)
 
-::: {.callout-note}
+::: {.callout-tip}
 As explained in the [previous chapter](agents.qmd#sec-workflow), we interpret the arrows in the diagram as part of the harness.
 The arrow labeled "get_weather(lat = 41.8, long = -87.6)" shows how the harness delivers the LLM-generated tool call to the tool itself.
 (The harness, not the LLM, actually runs tools.)

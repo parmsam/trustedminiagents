@@ -1,4 +1,4 @@
-# Registering tools in a full working example {#sec-tools}
+# Example: weather agent {#sec-weather}
 
 This chapter builds on the template in [the previous chapter](template.qmd) and shows how to add tools to a trusted mini-agent in a Shiny app.
 We use the weather agent example from [Chapter 2](hallucinations.qmd) to make the discussion concrete.
@@ -42,7 +42,7 @@ flowchart LR
   subgraph Trusted after human oversight
     RV --> W["Weather data"]
   end
-  subgraph Human oversight 
+  subgraph Human oversight
     RV --> M["leaflet map of<br>LLM-generated lat and long"]
   end
 ```
@@ -244,7 +244,7 @@ leaflet_map <- function(latitude, longitude, zoom = 6) {
 
 ## Chat constructor with tool registration
 
-As before, we write a constructor for the `ellmer` chat object.
+As before, we write a constructor for the chat object.
 This time, however, there is an extra step to create a new weather tool with a given set of reactive values, then register the new tool with the chat object.
 
 ```{.r}

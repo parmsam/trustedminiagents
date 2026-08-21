@@ -5,7 +5,7 @@ the developer has complete control of both the frontend and backend.
 We can optimize the human user experience of reviewing LLM-generated tool inputs, control all the tools, and cleanly separate trusted results from untrusted chat output.
 This chapter proposes a template for a trusted mini-agent as a [Shiny](https://shiny.posit.co) app in R.
 Users can begin with this template and add their own [`ellmer` tools](https://ellmer.tidyverse.org/reference/tool.html) to create a trusted mini-agent that fits their needs.
-[The next chapter](tools.qmd) covers tools.
+[The next chapter](weather.qmd) covers tools.
 
 ## Prerequisites
 
@@ -34,10 +34,10 @@ We separately consider the [`ellmer`](https://ellmer.tidyverse.org/) chat object
 ### Chat object
 
 In [`ellmer`](https://ellmer.tidyverse.org/), the chat object brokers communication with the LLM, and it facilitates the registration of tools.
-Crucially for trusted mini-agents, a chat object supports no tools by default, so each tool must be explicitly registered (see [the next chapter](tools.qmd)).
+Crucially for trusted mini-agents, a chat object supports no tools by default, so each tool must be explicitly registered (see [the next chapter](weather.qmd)).
 
 For convenience, we create a separate constructor for the [`ellmer`](https://ellmer.tidyverse.org/) chat object.
-This compartmentalization will be useful when we add [tools](tools.qmd) and complicated system prompts.
+This compartmentalization will be useful when we add [tools](weather.qmd) and complicated system prompts.
 
 We use [`chat_anthropic()`](https://ellmer.tidyverse.org/reference/chat_anthropic.html) in this example, but any [chat object](https://ellmer.tidyverse.org/reference/index.html#chatbots) will do.
 

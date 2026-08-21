@@ -162,5 +162,6 @@ The goal is to insert the LLM where:
 2. A human easily checks those solutions.
 
 No scenario is too small for a trusted mini-agent, and there are powerful opportunities in specific targeted problems.
+For example, there are powerful opportunities in clinical trial simulation, as discussed later in [Chapter 6](simulation.qmd).
 
 ## References

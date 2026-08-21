@@ -54,13 +54,11 @@ No prior experience with [`ellmer`](https://ellmer.tidyverse.org/) or [`shinycha
 
 ## Contents
 
-After introducing the concepts, the guide builds a minimalist example of a trusted mini-agent, then concludes with a motivating example.
-
 - [**Chapter 1: Deconstructing agents.**](agents.qmd) An overview of agents, their relevant components, and how they work together, laying the groundwork for trusted mini-agents in later chapters.
-- [**Chapter 2: Controlling hallucinations.**](hallucinations.qmd) An overview of the trusted mini-agent pattern and how it controls hallucinations, featuring the concept for the weather agent in [Chapter 4](tools.qmd).
+- [**Chapter 2: Controlling hallucinations.**](hallucinations.qmd) An overview of the trusted mini-agent pattern and how it controls hallucinations, featuring the concept for the weather agent in [Chapter 4](weather.qmd).
 - [**Chapter 3: A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
-- [**Chapter 4: Registering tools in a full working example.**](tools.qmd) A full working trusted mini-agent that demonstrates the concepts.
-- [**Chapter 5: A real-world example in clinical trial simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
+- [**Chapter 4: Example: weather agent.**](weather.qmd) A full working trusted mini-agent that gets the weather.
+- [**Chapter 5: Example: clinical trial simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
 
 ## Acknowledgements
 

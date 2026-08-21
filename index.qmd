@@ -60,7 +60,7 @@ After introducing the concepts, the guide builds a minimalist example of a trust
 - [**Chapter 2: Controlling hallucinations.**](hallucinations.qmd) An overview of the trusted mini-agent pattern and how it controls hallucinations, featuring the concept for the weather agent in [Chapter 4](tools.qmd).
 - [**Chapter 3: A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
 - [**Chapter 4: Registering tools in a full working example.**](tools.qmd) A full working trusted mini-agent that demonstrates the concepts.
-- [**Chapter 5: Example: CRAN download metrics.**](downloads.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
+- [**Chapter 5: A real-world example in clinical trial simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
 
 ## Acknowledgements
 

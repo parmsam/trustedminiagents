@@ -24,7 +24,7 @@ book:
     - hallucinations.qmd
     - template.qmd
     - tools.qmd
-    - downloads.qmd
+    - simulation.qmd
 
 format:
   html:

@@ -23,7 +23,7 @@ book:
     - agents.qmd
     - hallucinations.qmd
     - template.qmd
-    - tools.qmd
+    - weather.qmd
     - simulation.qmd
 
 format:

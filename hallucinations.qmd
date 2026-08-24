@@ -77,7 +77,7 @@ Instead, we identify precisely where hallucinations can happen, and we engineer 
 
 ### Fix 1 of 3: Help the human review the location.
 
-The AI-generated text of a tool call is a fallible AI model prediction.
+The AI-generated text of a tool call is a fallible prediction from the AI model.
 To control hallucinations in tool calls, we need to build in human oversight while acknowledging the limitations of human attention and effort.
 In the case of the weather agent, most human users will not bother to check the longitude and latitude numbers in "get_weather(41.8, -87.6)".
 Checking the raw coordinates of every tool call is simply too inconvenient for a human.

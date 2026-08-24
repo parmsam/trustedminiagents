@@ -5,8 +5,6 @@ It introduces a formal definition, interprets it in terms of the fixes we made t
 
 ## Defining trusted mini-agents
 
-We formalize these lessons from the weather agent into a general pattern for building reliable AI systems.
-
 ::: {.callout-note icon=false appearance="simple"}
 ## Definition: Trusted Mini-Agent
 

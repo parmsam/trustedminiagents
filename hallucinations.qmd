@@ -39,21 +39,21 @@ The agent elicits a location from the user, calls `get_weather()` to get the wea
 Even though `get_weather()` gives the agent access to reliable data, hallucinations can still happen through the LLM.
 
 ```{mermaid}
-%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#FEE2E2','noteBorderColor':'#DC2626','noteTextColor':'#7F1D1D'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}}}%%
 sequenceDiagram
-    participant U as User
-    participant L as LLM
-    participant T as Tool
+    participant User
+    participant LLM
+    participant Tool
 
-    U->>L: What's the weather in Chicago?
-    rect rgba(220, 38, 38, 0.08)
-    L->>T: get_weather(lat = 41.8, long = -87.6)
-    note over L,T: Vulnerable (AI-generated coordinates)
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(220, 38, 38, 0.25)
+    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
+    note over LLM,Tool: Vulnerable (AI-generated coordinates)
     end
-    T->>L: {"temperature": 72, "weather": "Sunny"}
-    rect rgba(220, 38, 38, 0.08)
-    L->>U: It's 50°F and rainy in Indianapolis.
-    note over U,L: Hallucination (wrong city)
+    Tool->>LLM: {"temperature": 72, "weather": "Sunny"}
+    rect rgba(220, 38, 38, 0.25)
+    LLM->>User: It's 50°F and rainy in Indianapolis.
+    note over User,LLM: Hallucination (wrong city)
     end
 ```
 
@@ -79,7 +79,31 @@ Checking the raw coordinates of every tool call is simply too inconvenient for a
 Instead, we render an eye-catching interactive map with a pin in the location.
 That way, it becomes obvious to any human user whether the LLM chose the right place.
 
-![Sequence diagram showing Fix 1. The user asks "What's the weather in Chicago?" and an interactive map of Chicago with a pin is displayed for human review before calling get_weather(lat = 41.8, long = -87.6). The tool returns correct data, but the LLM still hallucinates a wrong response. The map helps the user verify the location input.](./images/hallucinations/fix1.png)
+::: {#fig-fix1 layout="[70,30]" layout-valign="center"}
+
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}}}%%
+sequenceDiagram
+    participant User
+    participant LLM
+    participant Tool
+
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(234, 179, 8, 0.25)
+    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
+    note over LLM,Tool: ① Coordinates rendered as a map for review.
+    end
+    Tool->>LLM: {"temperature": 72, "weather": "Sunny"}
+    rect rgba(220, 38, 38, 0.25)
+    LLM->>User: It's 50°F and rainy in Indianapolis.
+    note over User,LLM: Hallucination (wrong city)
+    end
+```
+
+![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
+
+Sequence diagram showing Fix 1. The user asks "What's the weather in Chicago?" and an interactive map of Chicago with a pin is displayed for human review before calling get_weather(lat = 41.8, long = -87.6). The map helps the user verify the location input.
+:::
 
 ### Fix 2 of 3: Bypass the LLM to report the weather.
 
@@ -89,7 +113,27 @@ However, we do trust the NWS weather data itself.
 Instead of reading about the weather from the LLM, we should read it directly from the tool it comes from.
 We engineer the tool to bypass the LLM and return NWS weather data straight to the user interface.
 
-![Sequence diagram showing Fix 2. The user asks "What's the weather in Chicago?", an interactive map is shown for review, then get_weather is called. The tool output (temperature: 72, weather: Sunny) bypasses the LLM entirely and is returned directly to the user, eliminating the hallucination risk in the LLM's response.](./images/hallucinations/fix2.png)
+::: {#fig-fix2 layout="[70,30]" layout-valign="center"}
+
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}}}%%
+sequenceDiagram
+    participant User
+    participant LLM
+    participant Tool
+
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(234, 179, 8, 0.25)
+    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
+    note over LLM,Tool: ① Coordinates rendered as a map for review.
+    end
+    Tool->>User: {"temperature": 72, "weather": "Sunny"}
+```
+
+![① 'actorFontSize': 240](./images/hallucinations/leaflet.png)
+
+Sequence diagram showing Fix 2.
+:::
 
 ### Fix 3 of 3: Never bypass the `get_weather()` tool.
 
@@ -99,12 +143,54 @@ An agent like [Claude Code](https://code.claude.com/) may have [dozens of tools]
 Such general-purpose tools may compete with our weather tool and create a backdoor for LLM hallucinations.
 For example, if our weather agent has [Claude Code](https://code.claude.com/)'s `Write()` and `Bash()` tools, then the LLM may hallucinate code to fake the data instead of calling our trusted `get_weather()` tool.
 
-![Sequence diagram showing the problem of tool bypass. The user asks "What's the weather in Chicago?" but instead of calling get_weather, the LLM hallucinates by writing and executing a script called "post_fake_weather.sh" using Write and Bash tools. This produces fabricated data (temperature: -999, weather: vortex) that bypasses the trusted tool entirely.](./images/hallucinations/hallucination2.png)
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}}}%%
+sequenceDiagram
+    participant User
+    participant LLM
+    participant Tool
 
-Weather data must never come from the LLM, and it must never come from untrusted tools.
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(220, 38, 38, 0.25)
+    LLM->>Tool: Write("fake_weather.sh")<br>Bash("fake_weather.sh")
+    note over LLM,Tool: Hallucination (bypasses get_weather())
+    end
+    rect rgba(220, 38, 38, 0.25)
+    Tool->>User: {"temperature": -999, "weather": "Vortex"}
+    note over Tool,User: Fake data
+    end
+```
+
+Trusted weather data must never come from the LLM, and it must never come from untrusted tools.
 We engineer the user interface so that it only ever shows weather data from `get_weather()`.
 
-![Sequence diagram showing Fix 3. The user asks "What's the weather in Chicago?", the map is shown for review, then get_weather is called and its output goes directly to the user. Red prohibition symbols block two alternative paths: the LLM cannot send results directly to the user, and no other tool can bypass get_weather to produce weather data.](./images/hallucinations/fix3.png)
+::: {#fig-fix3 layout="[70,30]" layout-valign="center"}
+
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}}}%%
+sequenceDiagram
+    participant User
+    participant LLM
+    participant Tool
+
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(234, 179, 8, 0.25)
+    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
+    note over LLM,Tool: ① Coordinates rendered as a map for review.
+    end
+    Tool->>User: {"temperature": 72, "weather": "Sunny"}
+    rect rgba(107, 114, 128, 0.2)
+    LLM--xUser: ✗ Do not trust LLM for weather data.
+    end
+    rect rgba(107, 114, 128, 0.2)
+    LLM--xTool: ✗ No other tool can produce weather data.
+    end
+```
+
+![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
+
+Sequence diagram showing Fix 3.
+:::
 
 ## Defining trusted mini-agents
 

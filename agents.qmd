@@ -16,15 +16,15 @@ For example, suppose an LLM makes a prediction on this new dataset: "What's the 
 The LLM blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
 
 ```{mermaid}
-%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#FEE2E2','noteBorderColor':'#DC2626','noteTextColor':'#7F1D1D'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
-    participant U as User
-    participant L as LLM
+    participant User
+    participant LLM
 
-    U->>L: What's the weather in Chicago?
-    rect rgba(220, 38, 38, 0.08)
-    L->>U: It's 50°F and rainy in Indianapolis.
-    note over U,L: Hallucination (wrong city)
+    User->>LLM: What's the weather in Chicago?
+    rect rgba(220, 38, 38, 0.25)
+    LLM->>User: It's 50°F and rainy in Indianapolis.
+    note over User,LLM: Hallucination (wrong city)
     end
 ```
 
@@ -105,16 +105,16 @@ The following [sequence diagram](https://en.wikipedia.org/wiki/Sequence_diagram)
 ]
 
 ```{mermaid}
-%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
-    participant U as User
-    participant L as LLM
-    participant T as Tool
+    participant User
+    participant LLM
+    participant Tool
 
-    U->>L: "What's the weather in Chicago?"
-    L->>T: get_weather(lat = 41.8, long = -87.6)
-    T->>L: {"temperature": 72, "weather": "Sunny"}
-    L->>U: It's 72°F and sunny in Chicago.
+    User->>LLM: "What's the weather in Chicago?"
+    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
+    Tool->>LLM: {"temperature": 72, "weather": "Sunny"}
+    LLM->>User: It's 72°F and sunny in Chicago.
 ```
 
 Control and information flow among the user, LLM, and tool.

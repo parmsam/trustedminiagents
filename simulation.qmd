@@ -8,18 +8,18 @@ In this chapter, we present a motivating example of a trusted mini-agent for cli
 
 The app interface looks like this:
 
-![Screenshot of the clinical trial simulation agent Shiny app. The left sidebar shows an AI chat interface labeled "do not trust LLM output in here" with a user prompt describing a binary endpoint trial and the AI's response. The main panel displays two tables: "Design assumptions (HUMAN USER MUST REVIEW THIS)" showing simulation parameters for Power and Type I Error scenarios, and "Results (trusted given the assumptions)" showing efficacy probabilities of 0.65 and 0.04 for each scenario.](./images/simulation/app.png)
+![Screenshot of the clinical trial simulation agent Shiny app. The left sidebar shows an AI chat interface labeled "do not trust AI model output in here" with a user prompt describing a binary endpoint trial and the AI's response. The main panel displays two tables: "Design assumptions (HUMAN USER MUST REVIEW THIS)" showing simulation parameters for Power and Type I Error scenarios, and "Results (trusted given the assumptions)" showing efficacy probabilities of 0.65 and 0.04 for each scenario.](./images/simulation/app.png)
 
 The human user describes scenarios for a clinical trial design in natural language. 
-The LLM translates the human intent into rigorous simulation parameters. 
+The AI model translates the human intent into rigorous simulation parameters. 
 The user reviews those assumptions in the table at the top. 
 If we trust the simulation code, and if the assumptions represent the design the user wants, then we can trust the results.
 
-The LLM may hallucinate scenarios, but those scenarios are easy for a human to check.
+The AI model may hallucinate scenarios, but those scenarios are easy for a human to check.
 Given good scenarios, hallucinated results are structurally impossible.
 
 This is where the trusted mini-agent pattern really shines.
-The large language model makes the process of conceiving and tuning clinical trial designs more effortless and productive. But because of the structure around the LLM, the question is no longer "do we trust these results?", it's "do these assumptions reflect the scenarios the user wants to simulate?"
+The AI model makes the process of conceiving and tuning clinical trial designs more effortless and productive. But because of the structure around the AI model, the question is no longer "do we trust these results?", it's "do these assumptions reflect the scenarios the user wants to simulate?"
 That second question is much easier for human users to verify.
 
 ## App design
@@ -28,12 +28,12 @@ The following diagram demonstrates the flow of control in the simulation app we 
 
 ```{mermaid}
 flowchart LR
-  subgraph Untrusted due to the LLM
+  subgraph Untrusted due to the model
     U["User input"] --> C["shinychat UI"]
     C --> U
     C --> L[ellmer chat]
-    L --> LLM
-    LLM --> L
+    L --> Model
+    Model --> L
     L --> C
   end
   subgraph Trusted due to testing
@@ -46,27 +46,27 @@ flowchart LR
     RV --> R["Results data"]
   end
   subgraph Human oversight
-    RV --> A["Assumptions table of<br>LLM-generated trial scenarios"]
+    RV --> A["Assumptions table of<br>model-generated trial scenarios"]
   end
 ```
 
-The user enters a prompt into the [`shinychat`](https://posit-dev.github.io/shinychat/r/) UI, and there is a flow of conversation between the user and the LLM.
-At its discretion, the LLM sends [`ellmer`](https://ellmer.tidyverse.org/) the text for a tool call (e.g. `simulate_trial_binary(...)`), at which point [`ellmer`](https://ellmer.tidyverse.org/) runs the tool call instead of simply relaying the text back to [`shinychat`](https://posit-dev.github.io/shinychat/r/).
+The user enters a prompt into the [`shinychat`](https://posit-dev.github.io/shinychat/r/) UI, and there is a flow of conversation between the user and the AI model.
+At its discretion, the AI model sends [`ellmer`](https://ellmer.tidyverse.org/) the text for a tool call (e.g. `simulate_trial_binary(...)`), at which point [`ellmer`](https://ellmer.tidyverse.org/) runs the tool call instead of simply relaying the text back to [`shinychat`](https://posit-dev.github.io/shinychat/r/).
 
-The simulation tools run the statistical functions with the LLM-supplied assumptions and write both the assumptions and the results to a [`reactiveValues()`](https://shiny.posit.co/r/reference/shiny/0.11/reactivevalues.html) list.
+The simulation tools run the statistical functions with the AI-supplied assumptions and write both the assumptions and the results to a [`reactiveValues()`](https://shiny.posit.co/r/reference/shiny/0.11/reactivevalues.html) list.
 **Crucially, the simulation tools are the only things that can write to those `reactiveValues()` slots.**
 The `reactiveValues()` list is just a repository: it can hold many different types of results, so multiple trusted tools — one per endpoint type — can deposit their outputs into it.
 **This constraint still enforces rule 2 (injectivity) of trusted mini-agents.**
-Each result that reaches the user originates from a designated, tested tool, never directly from the LLM or the user.
+Each result that reaches the user originates from a designated, tested tool, never directly from the AI model or the user.
 
-The assumptions table renders the LLM-generated trial scenarios, so the user can check whether the LLM's translation of their query looks correct.
+The assumptions table renders the AI-generated trial scenarios, so the user can check whether the AI model's translation of their query looks correct.
 If the simulation tools are correct and the assumptions reflect the design the user wants, then hallucinated results are structurally impossible.
 
 ## Potential future work: empowering the agent
 
 Modern agents don't just one-shot proposed ideas, they [loop](https://code.claude.com/docs/en/agent-sdk/agent-loop) over untrusted tools and take time to reason without interruption.
 For example, extra tools could scrape [PubMed](https://pubmed.ncbi.nlm.nih.gov/) or [ClinicalTrials.gov](https://clinicaltrials.gov/) for relevant literature, and the queries could inform the simulation assumptions.
-These tools don't strictly need oversight because they don't directly produce critical results, they only inform the LLM's reasoning.
+These tools don't strictly need oversight because they don't directly produce critical results, they only inform the AI model's reasoning.
 Human oversight only needs to happen downstream, when inputs go into trusted tools that directly produce final results.
 
 ## Clinical trial simulation
@@ -233,8 +233,8 @@ type_vector <- function(type) {
 ```
 
 The tool constructor for continuous endpoints is as follows.
-The `ellmer::ContentToolResult()` call at the end of the wrapper function sends the efficacy results back to the LLM.
-Accessing the results helps the LLM think and reason, and it is for convenience only.
+The `ellmer::ContentToolResult()` call at the end of the wrapper function sends the efficacy results back to the AI model.
+Accessing the results helps the AI model think and reason, and it is for convenience only.
 This output will also show up in the `shinychat` interface, but on sheer principle, users should not trust anything in the chat window.
 
 ```{.r}
@@ -242,7 +242,7 @@ This output will also show up in the `shinychat` interface, but on sheer princip
 #' @description Create a trial simulation tool for `ellmer` that estimates
 #'   the probability of declaring efficacy in a two-arm RCT with a continuous
 #'   endpoint. The tool runs `simulate_trial_continuous()` with the
-#'   LLM-supplied assumptions and writes the results to a Shiny
+#'   AI-supplied assumptions and writes the results to a Shiny
 #'   `reactiveValues()` list.
 #' @return An `ellmer` tool object that can be registered with
 #'   an `ellmer` chat object.
@@ -338,7 +338,7 @@ The tool constructor for binary endpoints is as follows:
 #' @description Create a trial simulation tool for `ellmer` that estimates
 #'   the probability of declaring efficacy in a two-arm RCT with a binary
 #'   endpoint. The tool runs `simulate_trial_binary()` with the
-#'   LLM-supplied assumptions and writes the results to a Shiny
+#'   AI-supplied assumptions and writes the results to a Shiny
 #'   `reactiveValues()` list.
 #' @return An `ellmer` tool object that can be registered with
 #'   an `ellmer` chat object.
@@ -449,14 +449,14 @@ new_chat <- function(values) {
 
 ## Shiny UI
 
-The Shiny UI has a chat interface, a panel for results, and a panel for the human to review LLM-generated clinical trial simulation assumptions.
+The Shiny UI has a chat interface, a panel for results, and a panel for the human to review AI-generated clinical trial simulation assumptions.
 
 ```{.r}
 ui <- bslib::page_sidebar(
   title = "Clinical trial simulation agent",
   theme = bslib::bs_theme(bootswatch = "cosmo"),
   sidebar = bslib::sidebar(
-    title = "AI chat (do not trust LLM output in here)",
+    title = "AI chat (do not trust AI model output in here)",
     width = "30vw",
     style = "height: 100%; padding-top: 15px; overflow-x: hidden;",
     shinychat::chat_ui(
@@ -647,7 +647,7 @@ type_vector <- function(type) {
 #' @description Create a trial simulation tool for `ellmer` that estimates
 #'   the probability of declaring efficacy in a two-arm RCT with a binary
 #'   endpoint. The tool runs `simulate_trial_binary()` with the
-#'   LLM-supplied assumptions and writes the results to a Shiny
+#'   AI-supplied assumptions and writes the results to a Shiny
 #'   `reactiveValues()` list.
 #' @return An `ellmer` tool object that can be registered with
 #'   an `ellmer` chat object.
@@ -733,7 +733,7 @@ new_binary_tool <- function(values) {
 #' @description Create a trial simulation tool for `ellmer` that estimates
 #'   the probability of declaring efficacy in a two-arm RCT with a continuous
 #'   endpoint. The tool runs `simulate_trial_continuous()` with the
-#'   LLM-supplied assumptions and writes the results to a Shiny
+#'   AI-supplied assumptions and writes the results to a Shiny
 #'   `reactiveValues()` list.
 #' @return An `ellmer` tool object that can be registered with
 #'   an `ellmer` chat object.
@@ -842,7 +842,7 @@ ui <- bslib::page_sidebar(
   title = "Clinical trial simulation agent",
   theme = bslib::bs_theme(bootswatch = "cosmo"),
   sidebar = bslib::sidebar(
-    title = "AI chat (do not trust LLM output in here)",
+    title = "AI chat (do not trust AI model output in here)",
     width = "30vw",
     style = "height: 100%; padding-top: 15px; overflow-x: hidden;",
     shinychat::chat_ui(
@@ -967,7 +967,7 @@ To set up the test:
 
 * Click "Expect Shiny values".
 * Enter the prompt "Call simulate_trial_binary(scenario = 'Power', n_treatment = 100, n_control = 100, response_rate_treatment = 0.5, response_rate_control = 0.3, significance_level = 0.025), then be completely silent."
-This tests the end-to-end flow of the LLM interaction, the tool calling and Shiny output. The LLM may hallucinate, but if it does, the test failure will be obvious and can simply be retried.
+This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may hallucinate, but if it does, the test failure will be obvious and can simply be retried.
 * If a pop-up prompts you to record updates, click "Record".
 * After the assumptions and results tables populate, click "Expect Shiny values" again.
 Your window should now look like this:
@@ -978,7 +978,7 @@ Your window should now look like this:
 
 This creates a test file in `tests/testthat/` and a snapshot in `tests/testthat/_snaps/`.
 Now, open the file in `tests/testthat/`.
-Edit the file to add `app$wait_for_idle()` before each call to `app$expect_values()` to avoid race conditions with LLM streaming.
+Edit the file to add `app$wait_for_idle()` before each call to `app$expect_values()` to avoid race conditions with AI model streaming.
 
 Example:
 
@@ -1012,7 +1012,7 @@ test_that("test the app", {
 ```
 
 To test the entire app, run `shinytest2::test_app()` from the root directory of the app.
-The tests require authentication into the LLM, but they can run without a browser in a noninteractive R session.
+The tests require authentication into the AI model, but they can run without a browser in a noninteractive R session.
 
 ```{.r}
 > shinytest2::test_app()

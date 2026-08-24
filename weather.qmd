@@ -11,11 +11,11 @@ This is the appearance of the app we will build.
 ![Screenshot of the completed weather app showing a shinychat interface on the left with a user query about weather, a leaflet map in the center displaying the queried location, and a weather data table on the right with temperature and conditions.](./images/weather/app.png)
 
 In the `shinychat` interface on the left, the user asks for the weather in a US city.
-The leaflet map in the middle lets the user easily check if the LLM-generated coordinates for the city are correct.
+The leaflet map in the middle lets the user easily check if the AI-generated coordinates for the city are correct.
 Trustworthy weather data is displayed on the right.
 
-It is important to emphasize how the user interface separates the untrusted LLM conversation on the left from the trusted weather data on the right.
-The LLM-reported weather in the chat may be a hallucination, and the user should not rely on it.
+It is important to emphasize how the user interface separates the untrusted AI model conversation on the left from the trusted weather data on the right.
+The AI-reported weather in the chat may be a hallucination, and the user should not rely on it.
 The weather data on the right, however, is trustworthy because:
 
 1. We guarantee it comes from a trusted tool (`get_weather()`).
@@ -27,12 +27,12 @@ The following diagram demonstrates the flow of control in the weather app we are
 
 ```{mermaid}
 flowchart LR
-  subgraph Untrusted due to the LLM
+  subgraph Untrusted due to the model
     U["User input"] --> C["shinychat UI"]
     C --> U
     C --> L[ellmer chat]
-    L --> LLM
-    LLM --> L
+    L --> Model
+    Model --> L
     L --> C
   end
   subgraph Trusted due to testing
@@ -43,19 +43,19 @@ flowchart LR
     RV --> W["Weather data"]
   end
   subgraph Human oversight
-    RV --> M["leaflet map of<br>LLM-generated lat and long"]
+    RV --> M["leaflet map of<br>model-generated lat and long"]
   end
 ```
 
-The user enters a prompt into the [`shinychat`](https://posit-dev.github.io/shinychat/r/) UI, and there is a flow of conversation between the user and the LLM.
-At its discretion, the LLM sends [`ellmer`](https://ellmer.tidyverse.org/) the text for a tool call (e.g. `get_weather(41.8, -87.6)`), at which point [`ellmer`](https://ellmer.tidyverse.org/) runs the tool call instead of simply relaying the text back to [`shinychat`](https://posit-dev.github.io/shinychat/r/).
+The user enters a prompt into the [`shinychat`](https://posit-dev.github.io/shinychat/r/) UI, and there is a flow of conversation between the user and the AI model.
+At its discretion, the AI model sends [`ellmer`](https://ellmer.tidyverse.org/) the text for a tool call (e.g. `get_weather(41.8, -87.6)`), at which point [`ellmer`](https://ellmer.tidyverse.org/) runs the tool call instead of simply relaying the text back to [`shinychat`](https://posit-dev.github.io/shinychat/r/).
 
 `get_weather()` is a function that accepts a pair of geographic coordinates and returns the location and its weather to a [`reactiveValues()`](https://shiny.posit.co/r/reference/shiny/0.11/reactivevalues.html) list.
 **Crucially, `get_weather()` is the only thing that can write to those `reactiveValues()` slots.**
 **This constraint enforces rule 2 (injectivity) of trusted mini-agents.**
-Neither the user nor the LLM can update those reactive values any other way.
+Neither the user nor the AI model can update those reactive values any other way.
 
-The leaflet map renders the coordinates the LLM picked, so the user can check whether the LLM's resolution of their query looks correct.
+The leaflet map renders the coordinates the AI model picked, so the user can check whether the AI model's resolution of their query looks correct.
 If the `get_weather()` tool is correct and the map points to the right location, then hallucinated weather data is structurally impossible.
 
 ## Weather API function
@@ -201,7 +201,7 @@ new_weather_tool <- function(values) {
 
 ## Leaflet map
 
-The leaflet map helps the user check the correctness of LLM-generated location data.
+The leaflet map helps the user check the correctness of AI-generated location data.
 It accepts geographic coordinates and renders a map with a pin dropped at that location.
 
 ```{.r}
@@ -620,7 +620,7 @@ To set up the test:
 
 * Click "Expect Shiny values".
 * Enter the prompt "Call get_weather(latitude = 40, longitude = -80), then be completely silent."
-This tests the end-to-end flow of the LLM interaction, the tool calling and Shiny output. The LLM may hallucinate, but if it does, the test failure will be obvious and can simply be retried.
+This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may hallucinate, but if it does, the test failure will be obvious and can simply be retried.
 * If a pop-up prompts you to record updates, click "Record".
 * After the leaflet app and weather data table populate, click "Expect Shiny values" again.
 Your window should now look like this:
@@ -634,7 +634,7 @@ Now, open the file in `tests/testthat/`.
 Edit the file to:
 
 1. Set `MOCK_WEATHER` at the beginning of the test code.
-2. To avoid race conditions with LLM streaming, add `app$wait_for_idle()` before each call to `app$expect_values()`.
+2. To avoid race conditions with AI model streaming, add `app$wait_for_idle()` before each call to `app$expect_values()`.
 
 Example:
 
@@ -663,7 +663,7 @@ test_that("test the app", {
 ```
 
 To test the entire app, run `shinytest2::test_app()` from the root directory of the app.
-The tests require authentication into the LLM, but they can run without a browser in a noninteractive R session.
+The tests require authentication into the AI model, but they can run without a browser in a noninteractive R session.
 
 ```{.r}
 > shinytest2::test_app()

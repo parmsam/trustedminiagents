@@ -1,19 +1,19 @@
 # Deconstructing agents {#sec-agents}
 
 An [agent](https://en.wikipedia.org/wiki/AI_agent) is an artificial intelligence system that interacts with its environment, pursues goals, and takes actions.
-Because agents rely on [large language models](https://en.wikipedia.org/wiki/Large_language_model), they are vulnerable to bizarre unpredictable errors called [hallucinations](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
+Because agents rely on [AI models](https://en.wikipedia.org/wiki/Large_language_model), they are vulnerable to bizarre unpredictable errors called [hallucinations](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
 To develop an agent that controls hallucinations, we first need to understand the relevant components of agents and how they work together.
 This chapter describes these concepts and lays the groundwork for trusted mini-agents in later chapters. 
 
-## Large language models are not agents.
+## AI models are not agents.
 
-By itself, a large language model is just a text-in/text-out machine learning model.
-When generating predictions, an LLM has no ability to learn, no agency, and no ability to make decisions.
+By itself, an AI model is just a text-in/text-out machine learning model.
+When generating predictions, an AI model has no ability to learn, no agency, and no ability to make decisions.
 It only predicts lexical "tokens" similarly to how a simple linear regression model predicts new outcomes on a new dataset.
 
-No statistical model makes perfect predictions, which is why LLMs [hallucinate](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
-For example, suppose an LLM makes a prediction on this new dataset: "What's the weather in Chicago?"
-The LLM blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
+No statistical model makes perfect predictions, which is why AI models [hallucinate](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
+For example, suppose an AI model makes a prediction on this new dataset: "What's the weather in Chicago?"
+The AI model blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
 
 ::: {#fig-llm-hallucination}
 
@@ -21,28 +21,28 @@ The LLM blindly pattern-matches text to accompany the new data, and this predict
 %%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
     participant User
-    participant LLM
+    participant Model
 
-    User->>LLM: What's the weather in Chicago?
+    User->>Model: What's the weather in Chicago?
     rect rgba(220, 38, 38, 0.25)
-    LLM->>User: It's 50°F and rainy in Indianapolis.
-    note over User,LLM: Hallucination (wrong city)
+    Model->>User: It's 50°F and rainy in Indianapolis.
+    note over User,Model: Hallucination (wrong city)
     end
 ```
 
-Sequence diagram of a bare LLM hallucinating. The user asks about the weather in Chicago, but the LLM predicts a confident-sounding response with the Indianapolis weather instead.
+Sequence diagram of a bare AI model hallucinating. The user asks about the weather in Chicago, but the AI model predicts a confident-sounding response with the Indianapolis weather instead.
 :::
 
-## Agent = LLM + harness
+## Agent = AI model + harness
 
-At the implementation level, an agent is an LLM combined with a ["harness"](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness).
-The [harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) is the non-AI computing infrastructure that surrounds the LLM: the chat interface, the conversation history, long-term memory files, the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop), and above all, tools.
+At the implementation level, an agent is an AI model combined with a ["harness"](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness).
+The [harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) is the non-AI computing infrastructure that surrounds the AI model: the chat interface, the conversation history, long-term memory files, the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop), and above all, tools.
 
-![Diagram showing the components of an agent harness. On the left, the model (LLM) simply predicts text. On the right, the harness contains four parts: the context window (user prompt, system prompt, conversation history, tool definitions, tool results), registered tools (web_search, read_file, run_code, query_database, send_email, edit_document), and the agent loop (gather context, take action, verify results, repeat until done).](./images/agents/harness.png)
+![Diagram showing the components of an agent harness. On the left, the AI model simply predicts text. On the right, the harness contains four parts: the context window (user prompt, system prompt, conversation history, tool definitions, tool results), registered tools (web_search, read_file, run_code, query_database, send_email, edit_document), and the agent loop (gather context, take action, verify results, repeat until done).](./images/agents/harness.png)
 
 ## How agents use tools
 
-A tool is an external capability that the LLM can request to use.
+A tool is an external capability that the AI model can request to use.
 Tools empower the agent to perceive the world and act on it.
 Structrually, [a tool is a function combined with metadata.](https://youtu.be/ctc2kx3LxG8?t=2138)
 
@@ -53,9 +53,9 @@ $$
 $$
 
 A function is a transformation from structured inputs to structured outputs, such as a system library, R function, API, or script file.
-The metadata is a set of instructions in the system prompt that tells the LLM when and how to use the function.
+The metadata is a set of instructions in the system prompt that tells the AI model when and how to use the function.
 
-To request to use a tool, the LLM generates a tool call.
+To request to use a tool, the AI model generates a tool call.
 A tool call is a string of text that identifies the tool and specifies a set of input values (i.e. function arguments).
 Tool calls are [structured](https://en.wikipedia.org/wiki/Machine-readable_document) in a format like [JSON](https://en.wikipedia.org/wiki/JSON) so the harness can validate them against [schemas](https://json-schema.org/understanding-json-schema/about).
 This enforced structure lets the harness parse the call and evaluate the tool.
@@ -69,7 +69,7 @@ Suppose the user prompts:
 
 > "What's the weather in Chicago?"
 
-Instead of a plain language response, the LLM may generate a JSON tool call:
+Instead of a plain language response, the AI model may generate a JSON tool call:
 
 ```json
 {
@@ -88,24 +88,24 @@ Afterwards, it runs the underlying function call:
 get_weather(lat = 41.8, long = -87.6)
 ```
 
-and emits [structured output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) back to the model:
+and emits [structured output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) back to the AI model:
 
 ```json
 {"temperature": "72°F", "weather": "Sunny"}
 ```
 
-The model may then incorporate this structured output into its next response to the user.
+The AI model may then incorporate this structured output into its next response to the user.
 
 > It's 72°F and sunny in Chicago.
 
 ## Illustrating the workflow {#sec-workflow}
 
 The following [sequence diagram](https://en.wikipedia.org/wiki/Sequence_diagram) illustrates the workflow of the example weather agent from the previous section.^[
-  The [documentation of `ellmer`](https://ellmer.tidyverse.org/articles/tool-calling.html#introduction) cautions against this diagram because it draws a direct arrow from the LLM to the tool.
-  As the [`ellmer`](https://ellmer.tidyverse.org) authors rightly emphasize, the LLM does not actually run the tool: it only proposes an unevaluated tool call.
+  The [documentation of `ellmer`](https://ellmer.tidyverse.org/articles/tool-calling.html#introduction) cautions against this diagram because it draws a direct arrow from the AI model to the tool.
+  As the [`ellmer`](https://ellmer.tidyverse.org) authors rightly emphasize, the AI model does not actually run the tool: it only proposes an unevaluated tool call.
   However, our diagram is different because we think of the arrow as part of the harness.
-  We do not imply that LLMs run tools.
-  We only imply that the harness delivers the call from the LLM to the tool.
+  We do not imply that AI models run tools.
+  We only imply that the harness delivers the call from the AI model to the tool.
   This simplified framing helps us build trusted mini-agents in later chapters.
 ]
 
@@ -115,19 +115,19 @@ The following [sequence diagram](https://en.wikipedia.org/wiki/Sequence_diagram)
 %%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
     participant User
-    participant LLM
+    participant Model
     participant Tool
 
-    User->>LLM: "What's the weather in Chicago?"
-    LLM->>Tool: get_weather(lat = 41.8, long = -87.6)
-    Tool->>LLM: {"temperature": 72, "weather": "Sunny"}
-    LLM->>User: It's 72°F and sunny in Chicago.
+    User->>Model: "What's the weather in Chicago?"
+    Model->>Tool: get_weather(lat = 41.8, long = -87.6)
+    Tool->>Model: {"temperature": 72, "weather": "Sunny"}
+    Model->>User: It's 72°F and sunny in Chicago.
 ```
 
-Sequence diagram of a complete, successful weather agent interaction. The harness brokers the flow between the user, LLM, and tool, and each arrow converts an output from one component into an input for the next: the user's question becomes a tool call, and the tool's result becomes the LLM's reply.
+Sequence diagram of a complete, successful weather agent interaction. The harness brokers the flow between the user, AI model, and tool, and each arrow converts an output from one component into an input for the next: the user's question becomes a tool call, and the tool's result becomes the AI model's reply.
 :::
 
 The harness implicitly includes the horizontal arrows in the diagram.
-For example, the arrow labeled "get_weather(lat = 41.8, long = -87.6)" shows how the harness delivers the LLM-generated tool call to the tool itself.
-(The harness, not the LLM, actually runs tools.)
+For example, the arrow labeled "get_weather(lat = 41.8, long = -87.6)" shows how the harness delivers the AI-generated tool call to the tool itself.
+(The harness, not the AI model, actually runs tools.)
 Designing a trusted mini-agent is all about drawing the best arrows, as we will see in the [next chapter](hallucinations.qmd).

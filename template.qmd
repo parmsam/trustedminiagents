@@ -2,7 +2,7 @@
 
 Web applications are a great way to implement trusted mini-agents because
 the developer has complete control of both the frontend and backend.
-We can optimize the human user experience of reviewing LLM-generated tool inputs, control all the tools, and cleanly separate trusted results from untrusted chat output.
+We can optimize the human user experience of reviewing AI-generated tool inputs, control all the tools, and cleanly separate trusted results from untrusted chat output.
 This chapter proposes a template for a trusted mini-agent as a [Shiny](https://shiny.posit.co) app in R.
 Users can begin with this template and add their own [`ellmer` tools](https://ellmer.tidyverse.org/reference/tool.html) to create a trusted mini-agent that fits their needs.
 [The next chapter](weather.qmd) covers tools.
@@ -13,15 +13,15 @@ At minimum, we use these R packages to implement Shiny-based trusted mini-agents
 
 | Package | Role |
 |---|---|
-| [`ellmer`](https://ellmer.tidyverse.org/) | LLM chat client with tool registration and streaming. |
+| [`ellmer`](https://ellmer.tidyverse.org/) | AI model chat client with tool registration and streaming. |
 | [`shinychat`](https://posit-dev.github.io/shinychat/r/) | Drop-in chat UI for Shiny that binds to an `ellmer` chat object. |
 | [`bslib`](https://rstudio.github.io/bslib/) | Bootstrap-based interface elements such as `page_sidebar` and theming. |
 
 ## The template app
 
-The app has a simple interface: a sidebar with the untrusted AI chat, a `bslib` card where humans review LLM-generated tool inputs, and a `bslib` card for trusted results.
+The app has a simple interface: a sidebar with the untrusted AI chat, a `bslib` card where humans review AI-generated tool inputs, and a `bslib` card for trusted results.
 
-![Screenshot of the trusted mini-agent template Shiny app. The left sidebar shows an AI chat interface labeled "do not trust any AI output here!" with a simple ping/pong exchange. The main area has two empty placeholder cards: one labeled "Humans review LLM-generated tool inputs here" and another labeled "Trusted results go here," illustrating the three-region layout of trust zones.](./images/template/app.png)
+![Screenshot of the trusted mini-agent template Shiny app. The left sidebar shows an AI chat interface labeled "do not trust any AI output here!" with a simple ping/pong exchange. The main area has two empty placeholder cards: one labeled "Humans review AI-generated tool inputs here" and another labeled "Trusted results go here," illustrating the three-region layout of trust zones.](./images/template/app.png)
 
 It is critical to create separate regions of trust and skepticism in the interface.
 Users need to know exactly which parts to trust, which parts to review, and which parts to never trust.
@@ -33,7 +33,7 @@ We separately consider the [`ellmer`](https://ellmer.tidyverse.org/) chat object
 
 ### Chat object
 
-In [`ellmer`](https://ellmer.tidyverse.org/), the chat object brokers communication with the LLM, and it facilitates the registration of tools.
+In [`ellmer`](https://ellmer.tidyverse.org/), the chat object brokers communication with the AI model, and it facilitates the registration of tools.
 Crucially for trusted mini-agents, a chat object supports no tools by default, so each tool must be explicitly registered (see [the next chapter](weather.qmd)).
 
 For convenience, we create a separate constructor for the [`ellmer`](https://ellmer.tidyverse.org/) chat object.
@@ -63,7 +63,7 @@ ui <- bslib::page_sidebar(
     shinychat::chat_ui("chat")
   ),
   bslib::layout_columns(
-    bslib::card("Humans review LLM-generated tool inputs here."),
+    bslib::card("Humans review AI-generated tool inputs here."),
     bslib::card("Trusted results go here.")
   )
 )
@@ -71,7 +71,7 @@ ui <- bslib::page_sidebar(
 
 ### Shiny server function
 
-In the Shiny server, we have a reactive expression that watches for user prompts from the `shinychat` interface and streams the LLM's reply back into the UI token-by-token.
+In the Shiny server, we have a reactive expression that watches for user prompts from the `shinychat` interface and streams the AI model's reply back into the UI token-by-token.
 
 ```{.r}
 server <- function(input, output, session) {
@@ -102,7 +102,7 @@ ui <- bslib::page_sidebar(
     shinychat::chat_ui("chat")
   ),
   bslib::layout_columns(
-    bslib::card("Humans review LLM-generated tool inputs here."),
+    bslib::card("Humans review AI-generated tool inputs here."),
     bslib::card("Trusted results go here.")
   )
 )

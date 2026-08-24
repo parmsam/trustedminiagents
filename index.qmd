@@ -2,10 +2,10 @@
 # Introduction {.unnumbered}
 
 For high-stakes work that needs to be correct, generative AI needs guaranteed safeguards.
-Large language models (LLMs) inevitably hallucinate in surprising ways, no matter how good your prompts and [skills](https://agentskills.io) may be.
-In the life sciences, for example, LLM hallucinations risk undermining the correctness of statistical deliverables, impacting the health and safety of millions of patients.
+AI models inevitably hallucinate in surprising ways, no matter how good your prompts and [skills](https://agentskills.io) may be.
+In the life sciences, for example, AI model hallucinations risk undermining the correctness of statistical deliverables, impacting the health and safety of millions of patients.
 
-This guide proposes a strategy to achieve trust without sacrificing the convenience of LLMs.
+This guide proposes a strategy to achieve trust without sacrificing the convenience of AI models.
 We introduce *trusted mini-agents*: least-privilege AI systems that engineer out hallucinations and excel in precision scenarios.
 
 ## Definition
@@ -39,10 +39,10 @@ The trusted mini-agent workflow combines the power of modern agents with the saf
 flowchart LR
     subgraph AgentLoop["Agent Loop"]
         direction TB
-        LLM["LLM"]
+        Model["Model"]
         UT["Untrusted<br>Tools"]
-        LLM -->|"Autonomous<br>reasoning"| UT
-        UT --> LLM
+        Model -->|"Autonomous<br>reasoning"| UT
+        UT --> Model
     end
 
     HR["Human<br>Review"]
@@ -58,7 +58,7 @@ flowchart LR
     HR -->|"Rejected Proposals"| AgentLoop
     HR -->|"Reviewed Inputs"| TT
 
-    style LLM fill:#1F3A63,color:#ffffff,stroke:#1F3A63
+    style Model fill:#1F3A63,color:#ffffff,stroke:#1F3A63
     style UT fill:#6B2020,color:#ffffff,stroke:#6B2020
     style HR fill:#166534,color:#ffffff,stroke:#166534
     style TT fill:#166534,color:#ffffff,stroke:#166534
@@ -67,17 +67,17 @@ flowchart LR
     style Trust fill:#F3F4F6,stroke:#9CA3AF
 ```
 
-Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains the LLM and Untrusted Tools connected by bidirectional arrows labeled "Autonomous reasoning." The agent loop sends "Proposed Inputs" to a "Human Review" checkpoint, which can return "Rejected Proposals" back to the loop. After review, "Reviewed Inputs" flow into "Trusted Tools" inside the "Trust" boundary, which perform "Nontrivial Computation" and produce "Trusted Results" below.
+Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains the AI model and Untrusted Tools connected by bidirectional arrows labeled "Autonomous reasoning." The agent loop sends "Proposed Inputs" to a "Human Review" checkpoint, which can return "Rejected Proposals" back to the loop. After review, "Reviewed Inputs" flow into "Trusted Tools" inside the "Trust" boundary, which perform "Nontrivial Computation" and produce "Trusted Results" below.
 :::
 
 After an initial prompt, the work begins with the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop).
-Here, the LLM ponders and delibererates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
+Here, the AI model ponders and delibererates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
 
-Ultimately, the LLM proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
-Those inputs reflect how the LLM frames up the problem and sets up an advanced computation.
+Ultimately, the AI model proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
+Those inputs reflect how the AI model frames up the problem and sets up an advanced computation.
 Since they are about overall framing and human intent, they are easy to check for hallucinations, especially if the system for oversight is carefully structured, with realistic expectations about human understanding, attention, and fatigue.
 
-After a trusted system of review, the LLM-generated inputs move to a set of designated trusted tools that cannot be bypassed.
+After a trusted system of review, the AI-generated inputs move to a set of designated trusted tools that cannot be bypassed.
 Those trusted tools perform important computations such as statistical analysis, modeling, and simulation.
 Results from such computations are usually too complex for humans to check, but they are guaranteed to come from trusted tools on verified inputs.
 Conditional on good inputs, hallucinated results are structurally impossible.
@@ -98,7 +98,7 @@ No prior experience with [`ellmer`](https://ellmer.tidyverse.org/) or [`shinycha
 
 ## Acknowledgements
 
-* [Simon Couch](https://simonpcouch.com/) and [Sara Altman](https://saraaltman.com/) covered similar topics in their 2026 talk at [R/Pharma genAI Day](https://rinpharma.com/docs/ai-day/). In their [presentation](https://simonpcouch.github.io/gen-ai-pharma-26), they recommended: "Design the scaffold so that it matters less if [LLMs are] wrong."
+* [Simon Couch](https://simonpcouch.com/) and [Sara Altman](https://saraaltman.com/) covered similar topics in their 2026 talk at [R/Pharma genAI Day](https://rinpharma.com/docs/ai-day/). In their [presentation](https://simonpcouch.github.io/gen-ai-pharma-26), they recommended: "Design the scaffold so that it matters less if [AI models are] wrong."
 The trusted mini-agent pattern attempts to explore this idea to its fullest extent.
 * [Hadley Wickham](https://hadley.nz/)'s [keynote](https://www.youtube.com/watch?v=ctc2kx3LxG8&t=1124s) at [useR! 2025](https://user2025.r-project.org/) described the central role of tools in the development of agents.
 This talk was the original spark that led to the strategy in this guide.

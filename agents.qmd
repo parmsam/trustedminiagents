@@ -1,8 +1,9 @@
 # Deconstructing agents {#sec-agents}
 
 An [agent](https://en.wikipedia.org/wiki/AI_agent) is an artificial intelligence system that interacts with its environment, pursues goals, and takes actions.
-Because agents rely on [AI models](https://en.wikipedia.org/wiki/Large_language_model), they are vulnerable to bizarre unpredictable errors called [hallucinations](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
-To develop an agent that controls hallucinations, we first need to understand the relevant components of agents and how they work together.
+Because agents rely on [AI models](https://en.wikipedia.org/wiki/Large_language_model), they are vulnerable to unpredictable errors.
+A few of the most common types of errors include subtle misinterpretations of prompts, lack of alignment with the user, and confident fabrications called [hallucinations](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
+To develop an agent that controls AI errors, we first need to understand the relevant components of agents and how they work together.
 This chapter describes these concepts and lays the groundwork for trusted mini-agents in later chapters. 
 
 ## AI models are not agents.
@@ -11,7 +12,7 @@ By itself, an AI model is just a text-in/text-out machine learning model.
 When generating predictions, an AI model has no ability to learn, no agency, and no ability to make decisions.
 It only predicts lexical "tokens" similarly to how a simple linear regression model predicts new outcomes on a new dataset.
 
-No statistical model makes perfect predictions, which is why AI models [hallucinate](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
+No statistical model makes perfect predictions, which is why AI models [produce errors](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
 For example, suppose an AI model makes a prediction on this new dataset: "What's the weather in Chicago?"
 The AI model blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
 
@@ -26,11 +27,11 @@ sequenceDiagram
     User->>Model: What's the weather in Chicago?
     rect rgba(220, 38, 38, 0.25)
     Model->>User: It's 50°F and rainy in Indianapolis.
-    note over User,Model: Hallucination (wrong city)
+    note over User,Model: AI error (wrong city)
     end
 ```
 
-Sequence diagram of a bare AI model hallucinating. The user asks about the weather in Chicago, but the AI model predicts a confident-sounding response with the Indianapolis weather instead.
+Sequence diagram of a bare AI model producing an error. The user asks about the weather in Chicago, but the AI model predicts a confident-sounding response with the Indianapolis weather instead.
 :::
 
 ## Agent = AI model + harness
@@ -130,4 +131,4 @@ Sequence diagram of a complete, successful weather agent interaction. The harnes
 The harness implicitly includes the horizontal arrows in the diagram.
 For example, the arrow labeled "get_weather(lat = 41.8, long = -87.6)" shows how the harness delivers the AI-generated tool call to the tool itself.
 (The harness, not the AI model, actually runs tools.)
-Designing a trusted mini-agent is all about drawing the best arrows, as we will see in the [next chapter](hallucinations.qmd).
+Designing a trusted mini-agent is all about drawing the best arrows, as we will see in the [next chapter](errors.qmd).

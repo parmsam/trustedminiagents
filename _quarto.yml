@@ -6,7 +6,7 @@ bibliography: references.bib
 
 book:
   title: "Trusted Mini-Agents"
-  subtitle: "Engineering Hallucinations Out of AI Workflows"
+  subtitle: "Engineering AI Errors Out of Agentic Workflows"
   author: "Will Landau"
   date: today
   search: true
@@ -21,7 +21,7 @@ book:
   chapters:
     - index.qmd
     - agents.qmd
-    - hallucinations.qmd
+    - errors.qmd
     - template.qmd
     - weather.qmd
     - simulation.qmd

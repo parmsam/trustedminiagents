@@ -2,18 +2,18 @@
 # Introduction {.unnumbered}
 
 For high-stakes work that needs to be correct, generative AI needs guaranteed safeguards.
-AI models inevitably hallucinate in surprising ways, no matter how good your prompts and [skills](https://agentskills.io) may be.
-In the life sciences, for example, AI model hallucinations risk undermining the correctness of statistical deliverables, impacting the health and safety of millions of patients.
+AI models produce errors that cannot be prevented through the engineering of prompts or context.
+In the life sciences, for example, AI model errors risk undermining the correctness of statistical deliverables, impacting the health and safety of millions of patients.
 
 This guide proposes a strategy to achieve trust without sacrificing the convenience of AI models.
-We introduce *trusted mini-agents*: least-privilege AI systems that engineer out hallucinations and excel in precision scenarios.
+We introduce *trusted mini-agents*: least-privilege AI systems that engineer out AI errors and excel in precision scenarios.
 
 ## Definition
 
 A trusted mini-agent is an agent that obeys the following three rules:
 
 1. **Trusted tools directly produce all results.**
-2. **Each result only comes from one trusted tool.**
+2. **Each result only comes from one trusted tool.** 
 3. **Inputs to trusted tools have trusted human oversight.**
 
 ## Impact on users
@@ -75,12 +75,12 @@ Here, the AI model ponders and delibererates uninterrupted and unsupervised, pot
 
 Ultimately, the AI model proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
 Those inputs reflect how the AI model frames up the problem and sets up an advanced computation.
-Since they are about overall framing and human intent, they are easy to check for hallucinations, especially if the system for oversight is carefully structured, with realistic expectations about human understanding, attention, and fatigue.
+Since they are about overall framing and human intent, they are easy to check for AI errors, especially if the system for oversight is carefully structured, with realistic expectations about human understanding, attention, and fatigue.
 
 After a trusted system of review, the AI-generated inputs move to a set of designated trusted tools that cannot be bypassed.
 Those trusted tools perform important computations such as statistical analysis, modeling, and simulation.
 Results from such computations are usually too complex for humans to check, but they are guaranteed to come from trusted tools on verified inputs.
-Conditional on good inputs, hallucinated results are structurally impossible.
+Conditional on good inputs, AI-generated errors in the results are structurally impossible.
 
 ## Who this is for
 
@@ -91,7 +91,7 @@ No prior experience with [`ellmer`](https://ellmer.tidyverse.org/) or [`shinycha
 ## Contents
 
 - [**Chapter 1: Deconstructing agents.**](agents.qmd) An overview of agents, their relevant components, and how they work together, laying the groundwork for trusted mini-agents in later chapters.
-- [**Chapter 2: Controlling hallucinations.**](hallucinations.qmd) An overview of the trusted mini-agent pattern and how it controls hallucinations, featuring the concept for the weather agent in [Chapter 4](weather.qmd).
+- [**Chapter 2: Controlling AI errors.**](errors.qmd) An overview of the trusted mini-agent pattern and how it controls AI errors, featuring the concept for the weather agent in [Chapter 4](weather.qmd).
 - [**Chapter 3: A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
 - [**Chapter 4: Example: weather agent.**](weather.qmd) A full working trusted mini-agent that gets the weather.
 - [**Chapter 5: Example: simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.

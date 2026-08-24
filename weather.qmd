@@ -1,7 +1,7 @@
 # Example: weather agent {#sec-weather}
 
 This chapter builds on the template in [the previous chapter](template.qmd) and shows how to add tools to a trusted mini-agent in a Shiny app.
-We use the weather agent example from [Chapter 2](hallucinations.qmd) to make the discussion concrete.
+We use the weather agent example from [Chapter 2](errors.qmd) to make the discussion concrete.
 By the end of the chapter, we will have a full working example of a trusted mini-agent.
 
 ## Overview
@@ -15,7 +15,7 @@ The leaflet map in the middle lets the user easily check if the AI-generated coo
 Trustworthy weather data is displayed on the right.
 
 It is important to emphasize how the user interface separates the untrusted conversation with the AI model on the left from the trusted weather data on the right.
-The AI-reported weather in the chat may be a hallucination, and the user should not rely on it.
+The AI-reported weather in the chat may be erroneous, and the user should not rely on it.
 The weather data on the right, however, is trustworthy because:
 
 1. We guarantee it comes from a trusted tool (`get_weather()`).
@@ -56,7 +56,7 @@ At its discretion, the AI model sends [`ellmer`](https://ellmer.tidyverse.org/) 
 Neither the user nor the AI model can update those reactive values any other way.
 
 The leaflet map renders the coordinates the AI model picked, so the user can check whether its resolution of the query looks correct.
-If the `get_weather()` tool is correct and the map points to the right location, then hallucinated weather data is structurally impossible.
+If the `get_weather()` tool is correct and the map points to the right location, then AI-generated errors in the weather data are structurally impossible.
 
 ## Weather API function
 
@@ -620,7 +620,7 @@ To set up the test:
 
 * Click "Expect Shiny values".
 * Enter the prompt "Call get_weather(latitude = 40, longitude = -80), then be completely silent."
-This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may hallucinate, but if it does, the test failure will be obvious and can simply be retried.
+This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may produce errors, but if it does, the test failure will be obvious and can simply be retried.
 * If a pop-up prompts you to record updates, click "Record".
 * After the leaflet app and weather data table populate, click "Expect Shiny values" again.
 Your window should now look like this:

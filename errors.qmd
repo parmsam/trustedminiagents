@@ -1,25 +1,26 @@
-# Controlling hallucinations {#sec-hallucinations}
+# Controlling AI errors {#sec-hallucinations}
 
 When it comes to reliability, the components in and around agents have different strengths and weaknesses.
 
 Component | Strengths | Weaknesses
 ---|---|---
-AI model | Proposing ideas, translating human intent into tool inputs. | AI models hallucinate, and their outputs must be verified by humans.
+AI model | Proposing ideas, translating human intent into tool inputs. | AI models produce errors, and their outputs must be verified by humans.
 Tools | Trustworthy and testable. Outputs are reliable given correct inputs. | Limited flexibility, inputs need verification.
 User | Setting goals, framing intent, checking tool inputs. | Slow, fatigues easily, cannot reliably check tool outputs.
 
-To control hallucinations, we leverage these strengths and compensate for the weaknesses.
+To control AI errors, we leverage these strengths and compensate for the weaknesses.
 This chapter builds the intuition for how to do that, and formalizes it into the set of rules that define trusted mini-agents.
 
-## Agents are vulnerable to hallucinations.
+## Agents are vulnerable to AI errors.
 
 > "All models are wrong, but some are useful."
 >
 > — @box1987
 
 REMEMBER: An AI model has less-than-perfect prediction accuracy.
+AI models are fallible in ways that no amount of prompt engineering or context design can fully prevent: they may fabricate facts, misinterpret user intent, frame a problem misleadingly, or omit critical details.
 At any time for any reason, an AI model can produce a [hallucination](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)): a confident-sounding prediction that is completely wrong.
-Prompt engineering and [skill creation](https://agentskills.io) can never eliminate hallucinations entirely.
+Prompt engineering and [skill creation](https://agentskills.io) can never eliminate AI errors entirely.
 The choice of prompt and model improves convenience, but it cannot guarantee correctness.
 
 ::: {.callout-tip}
@@ -36,7 +37,7 @@ For example, consider a simple weather agent.^[
 ]
 The agent has a single `get_weather()` tool, which scrapes the National Weather Service (NWS) API for real weather data.
 The agent elicits a location from the user, calls `get_weather()` to get the weather at that location, returns the result to the AI model, and relays the AI model's response back to the user.
-Even though `get_weather()` gives the agent access to reliable data, hallucinations can still happen through the AI model.
+Even though `get_weather()` gives the agent access to reliable data, errors can still happen through the AI model.
 
 ::: {#fig-weather-vulnerable}
 
@@ -55,11 +56,11 @@ sequenceDiagram
     Tool->>Model: {"temperature": 72, "weather": "Sunny"}
     rect rgba(220, 38, 38, 0.25)
     Model->>User: It's 50°F and rainy in Indianapolis.
-    note over User,Model: Hallucination (wrong city)
+    note over User,Model: AI error (wrong city)
     end
 ```
 
-Sequence diagram of the weather agent's vulnerabilities. The AI model generates the coordinates for `get_weather()` unchecked, and even though the tool returns correct data for Chicago, the AI model can still hallucinate when relaying the result, reporting the wrong city to the user.
+Sequence diagram of the weather agent's vulnerabilities. The AI model generates the coordinates for `get_weather()` unchecked, and even though the tool returns correct data for Chicago, the AI model can still produce errors when relaying the result, reporting the wrong city to the user.
 :::
 
 ::: {.callout-tip}
@@ -71,14 +72,14 @@ As we will see below, designing a trusted mini-agent is all about drawing the be
 
 ## How to fix the weather agent
 
-To control hallucinations in the weather agent, we do not try to improve our system prompt or choose a "better" AI model.
+To control AI errors in the weather agent, we do not try to improve our system prompt or choose a "better" AI model.
 That would be wishful thinking.
-Instead, we identify precisely where hallucinations can happen, and we engineer the [harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) to eliminate those vulnerabilities.
+Instead, we identify precisely where errors can happen, and we engineer the [harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) to eliminate those vulnerabilities.
 
 ### Fix 1 of 3: Help the human review the location.
 
 The AI-generated text of a tool call is a fallible prediction from the AI model.
-To control hallucinations in tool calls, we need to build in human oversight while acknowledging the limitations of human attention and effort.
+To control errors in tool calls, we need to build in human oversight while acknowledging the limitations of human attention and effort.
 In the case of the weather agent, most human users will not bother to check the longitude and latitude numbers in "get_weather(41.8, -87.6)".
 Checking the raw coordinates of every tool call is simply too inconvenient for a human.
 Instead, we render an eye-catching interactive map with a pin in the location.
@@ -101,7 +102,7 @@ sequenceDiagram
     Tool->>Model: {"temperature": 72, "weather": "Sunny"}
     rect rgba(220, 38, 38, 0.25)
     Model->>User: It's 50°F and rainy in Indianapolis.
-    note over User,Model: Hallucination (wrong city)
+    note over User,Model: AI error (wrong city)
     end
 ```
 
@@ -113,7 +114,7 @@ Sequence diagram showing Fix 1. The user asks "What's the weather in Chicago?" a
 ### Fix 2 of 3: Bypass the AI model to report the weather.
 
 We do not trust the AI model to describe NWS weather data, even if it's just relaying data back to the user.
-Because it would require output from an AI model, even this simple task would be vulnerable to hallucinations.
+Because it would require output from an AI model, even this simple task would be vulnerable to AI errors.
 However, we do trust the NWS weather data itself.
 Instead of reading about the weather from the AI model, we should read it directly from the tool it comes from.
 We engineer the tool to bypass the AI model and return NWS weather data straight to the user interface.
@@ -137,7 +138,7 @@ sequenceDiagram
 
 ![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
 
-Sequence diagram showing Fix 2. After the map confirms the location, `get_weather()` sends NWS weather data directly to the user interface instead of relaying it through the AI model. Bypassing the AI model for this step eliminates the risk of a hallucinated weather report.
+Sequence diagram showing Fix 2. After the map confirms the location, `get_weather()` sends NWS weather data directly to the user interface instead of relaying it through the AI model. Bypassing the AI model for this step eliminates the risk of an erroneous weather report.
 :::
 
 ### Fix 3 of 3: Never bypass the `get_weather()` tool.
@@ -145,8 +146,8 @@ Sequence diagram showing Fix 2. After the map confirms the location, `get_weathe
 Now, if the AI model chooses to call `get_weather()`, then we can trust the weather data we see.
 But what if the AI model decides to bypass `get_weather()` with a different tool?
 An agent like [Claude Code](https://code.claude.com/) may have [dozens of tools](https://code.claude.com/docs/en/tools-reference), including tools to write and execute arbitrary code.
-Such general-purpose tools may compete with our weather tool and create a backdoor for AI model hallucinations.
-For example, if our weather agent has [Claude Code](https://code.claude.com/)'s `Write()` and `Bash()` tools, then the AI model may hallucinate code to fake the data instead of calling our trusted `get_weather()` tool.
+Such general-purpose tools may compete with our weather tool and create a backdoor for AI errors.
+For example, if our weather agent has [Claude Code](https://code.claude.com/)'s `Write()` and `Bash()` tools, then the AI model may produce erroneous code to fake the data instead of calling our trusted `get_weather()` tool.
 
 ::: {#fig-fake-weather}
 
@@ -160,7 +161,7 @@ sequenceDiagram
     User->>Model: What's the weather in Chicago?
     rect rgba(220, 38, 38, 0.25)
     Model->>Tool: Write("fake_weather.sh")<br>Bash("fake_weather.sh")
-    note over Model,Tool: Hallucination (bypasses get_weather())
+    note over Model,Tool: AI error (bypasses get_weather())
     end
     rect rgba(220, 38, 38, 0.25)
     Tool->>User: {"temperature": -999, "weather": "Vortex"}
@@ -168,7 +169,7 @@ sequenceDiagram
     end
 ```
 
-Sequence diagram of a hallucination that bypasses `get_weather()` entirely. Instead of calling the trusted tool, the AI model writes and runs its own script to fabricate weather data, producing a result that looks legitimate but comes from an untrusted source.
+Sequence diagram of an AI error that bypasses `get_weather()` entirely. Instead of calling the trusted tool, the AI model writes and runs its own script to fabricate weather data, producing a result that looks legitimate but comes from an untrusted source.
 :::
 
 Trusted weather data must never come from the AI model, and it must never come from untrusted tools.
@@ -209,7 +210,7 @@ We formalize these lessons from the weather agent into a general pattern for bui
 ::: {.callout-note icon=false appearance="simple"}
 ## Definition: Trusted Mini-Agent
 
-A **trusted mini-agent** is a least-privilege AI agent that engineers out hallucinations with the following three rules:
+A **trusted mini-agent** is a least-privilege AI agent that engineers out AI errors with the following three rules:
 
 1. **Trusted tools directly produce all results.** No result comes from the AI model. And for each type of result, there exists a tool to produce it.
 2. **Each result only comes from one trusted tool.** No alternative tool can bypass the designated tool.
@@ -326,12 +327,12 @@ Here, the AI model ponders and delibererates uninterrupted and unsupervised, pot
 
 Ultimately, the AI model proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
 Those inputs reflect how the AI model frames up the problem and sets up an advanced computation.
-Since they are about overall framing and human intent, they are easy to check for hallucinations, especially if the system for oversight is carefully structured, with realistic expectations about human understanding, attention, and fatigue.
+Since they are about overall framing and human intent, they are easy to check for AI errors, especially if the system for oversight is carefully structured, with realistic expectations about human understanding, attention, and fatigue.
 
 After a trusted system of review, the AI-generated inputs move to a set of designated trusted tools that cannot be bypassed.
 Those trusted tools perform important computations such as statistical analysis, modeling, and simulation.
 Results from such computations are usually too complex for humans to check, but they are guaranteed to come from trusted tools on verified inputs.
-Conditional on good inputs, hallucinated results are structurally impossible.
+Conditional on good inputs, AI-generated errors in the results are structurally impossible.
 
 ## When trusted mini-agents are useful
 

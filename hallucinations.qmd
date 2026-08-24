@@ -38,7 +38,24 @@ The agent has a single `get_weather()` tool, which scrapes the National Weather 
 The agent elicits a location from the user, calls `get_weather()` to get the weather at that location, returns the result to the LLM, and relays the LLM's response back to the user.
 Even though `get_weather()` gives the agent access to reliable data, hallucinations can still happen through the LLM.
 
-![Sequence diagram showing vulnerability in a weather agent. The user asks "What's the weather in Chicago?", the LLM generates a tool call get_weather(lat = 41.8, long = -87.6) marked as "VULNERABLE" because the coordinates are AI-generated, the tool returns correct data (temperature: 72, weather: Sunny), but the LLM hallucinates a completely different response: "It's 50 degrees Fahrenheit and rainy in Indianapolis."](./images/hallucinations/hallucination1.png)
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#FEE2E2','noteBorderColor':'#DC2626','noteTextColor':'#7F1D1D'}}}%%
+sequenceDiagram
+    participant U as User
+    participant L as LLM
+    participant T as Tool
+
+    U->>L: What's the weather in Chicago?
+    rect rgba(220, 38, 38, 0.08)
+    L->>T: get_weather(lat = 41.8, long = -87.6)
+    note over L,T: Vulnerable (AI-generated coordinates)
+    end
+    T->>L: {"temperature": 72, "weather": "Sunny"}
+    rect rgba(220, 38, 38, 0.08)
+    L->>U: It's 50°F and rainy in Indianapolis.
+    note over U,L: Hallucination (wrong city)
+    end
+```
 
 ::: {.callout-tip}
 As explained in the [previous chapter](agents.qmd#sec-workflow), we interpret the arrows in the diagram as part of the harness.

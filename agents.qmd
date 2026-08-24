@@ -15,7 +15,18 @@ No statistical model makes perfect predictions, which is why LLMs [hallucinate](
 For example, suppose an LLM makes a prediction on this new dataset: "What's the weather in Chicago?"
 The LLM blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
 
-![Sequence diagram showing a user asking "What's the weather in Chicago?" and the LLM responding with a hallucination: "It's 50 degrees Fahrenheit and rainy in Indianapolis." The LLM fabricates an incorrect answer without access to real data.](./images/agents/llm1.png)
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#FEE2E2','noteBorderColor':'#DC2626','noteTextColor':'#7F1D1D'}}}%%
+sequenceDiagram
+    participant U as User
+    participant L as LLM
+
+    U->>L: What's the weather in Chicago?
+    rect rgba(220, 38, 38, 0.08)
+    L->>U: It's 50°F and rainy in Indianapolis.
+    note over U,L: Hallucination (wrong city)
+    end
+```
 
 ## Agent = LLM + harness
 
@@ -93,7 +104,18 @@ The following [sequence diagram](https://en.wikipedia.org/wiki/Sequence_diagram)
   This simplified framing helps us build trusted mini-agents in later chapters.
 ]
 
-![Sequence diagram showing the flow of control and information in an agent with a "get_weather" tool. The user asks "What's the weather in Chicago?", the harness passes the prompt to the LLM, the LLM generates a tool call, the harness passes the underlying function call ("get_weather(lat = 41.8, long = -87.6)") from the LLM to the tool, the tool returns structured data (temperature: 72, weather: Sunny) which the harness relays to the LLM, and the LLM generates a response that the harness delivers to the user: "It's 72 degrees Fahrenheit and sunny in Chicago."](./images/agents/llm2.png)
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63'}}}%%
+sequenceDiagram
+    participant U as User
+    participant L as LLM
+    participant T as Tool
+
+    U->>L: "What's the weather in Chicago?"
+    L->>T: get_weather(lat = 41.8, long = -87.6)
+    T->>L: {"temperature": 72, "weather": "Sunny"}
+    L->>U: It's 72°F and sunny in Chicago.
+```
 
 Control and information flow among the user, LLM, and tool.
 The harness brokers this flow.

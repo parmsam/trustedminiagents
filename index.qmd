@@ -90,11 +90,17 @@ No prior experience with [`ellmer`](https://ellmer.tidyverse.org/) or [`shinycha
 
 ## Contents
 
-- [**Chapter 1: Deconstructing agents.**](agents.qmd) An overview of agents, their relevant components, and how they work together, laying the groundwork for trusted mini-agents in later chapters.
-- [**Chapter 2: Controlling AI errors.**](errors.qmd) An overview of the trusted mini-agent pattern and how it controls AI errors, featuring the concept for the weather agent in [Chapter 4](weather.qmd).
-- [**Chapter 3: A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
-- [**Chapter 4: Example: weather agent.**](weather.qmd) A full working trusted mini-agent that gets the weather.
-- [**Chapter 5: Example: simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
+**Concepts.** The abstract ideas behind trusted mini-agents, independent of any particular programming language or framework.
+
+- [**Deconstructing agents.**](agents.qmd) An overview of agents, their relevant components, and how they work together, laying the groundwork for trusted mini-agents in later chapters.
+- [**AI errors.**](errors.qmd) How AI errors manifest in agents, and how to harden an example weather agent against them.
+- [**The formal definition.**](definition.qmd) The formal definition of a trusted mini-agent, including the three rules, the workflow, and when trusted mini-agents are useful.
+
+**Implementation.** A concrete R and Shiny implementation of trusted mini-agents, building on the concepts above.
+
+- [**A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
+- [**Example: weather agent.**](weather.qmd) A full working trusted mini-agent that gets the weather.
+- [**Example: simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
 
 ## Acknowledgements
 

@@ -20,11 +20,16 @@ book:
     left: "© 2026 Eli Lilly and Company"
   chapters:
     - index.qmd
-    - agents.qmd
-    - errors.qmd
-    - template.qmd
-    - weather.qmd
-    - simulation.qmd
+    - part: "Concepts"
+      chapters:
+        - agents.qmd
+        - errors.qmd
+        - definition.qmd
+    - part: "Implementation"
+      chapters:
+        - template.qmd
+        - weather.qmd
+        - simulation.qmd
 
 format:
   html:

@@ -19,15 +19,15 @@ A **trusted mini-agent** is a least-privilege AI agent that engineers out AI err
 
 The three rules map to the three fixes we made to the weather agent.
 
- | Rule | Fix
----|---|---
+| Rule | Fix
+---|---
 1. Trusted tools directly produce all results. | Bypass the AI model to report the weather.
 2. Each result only comes from one trusted tool. | Never bypass the `get_weather()` tool.
 3. Inputs to trusted tools have trusted human oversight. | Show the location in an interactive map.
 
 In terms of tools and results, a trusted mini-agent is a bijective function.
 Rule 1 implies surjectivity: every result can be produced by at least one tool.
-Rule 2 implies injectivity: each result must originate from at most one distinct unique designated tool.
+Rule 2 implies injectivity: each result must originate from at most one designated tool.
 Here is a mental model of bijectivity for an enhanced weather tool that also reports [emergency alerts](https://en.wikipedia.org/wiki/Emergency_Alert_System):
 
 ::: {#fig-bijective}
@@ -123,7 +123,7 @@ Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains 
 :::
 
 After an initial prompt, the work begins with the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop).
-Here, the AI model ponders and delibererates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
+Here, the AI model ponders and deliberates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
 
 Ultimately, the AI model proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
 Those inputs reflect how the AI model frames up the problem and sets up an advanced computation.
@@ -144,5 +144,5 @@ The goal is to insert the AI model where:
 1. The AI model proposes solutions better than a human.
 2. A human easily checks those solutions.
 
-No scenario is too small for a trusted mini-agent, and there are powerful opportunities in specific targeted problems.
-For example, there are powerful opportunities in clinical trial simulation, as discussed later in [Chapter 6](simulation.qmd).
+No scenario is too small for a trusted mini-agent, and specific, targeted problems offer some of the most powerful opportunities.
+For example, clinical trial simulation offers powerful opportunities, as discussed later in [Chapter 6](simulation.qmd).

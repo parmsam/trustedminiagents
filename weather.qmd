@@ -19,7 +19,7 @@ The AI-reported weather in the chat may be erroneous, and the user should not re
 The weather data on the right, however, is trustworthy because:
 
 1. We guarantee it comes from a trusted tool (`get_weather()`).
-1. The leaflet map in the middle is super easy to check, so we can be confident the app is checking the weather in the right place.
+2. The leaflet map in the middle is super easy to check, so we can be confident the app is checking the weather in the right place.
 
 ## App design
 
@@ -90,7 +90,7 @@ This is a simple function that the agentic tool will eventually call.
 #'   weather <- weather_api(latitude = 39.7684, longitude = -86.1581)
 #'   str(weather)
 weather_api <- function(latitude, longitude) {
-  # Assertions are super important for any agent tool.
+  # Assertions are critical for any agent tool.
   stopifnot(
     is.numeric(latitude),
     length(latitude) == 1,
@@ -356,7 +356,7 @@ Here is the full code for the app.
 #'   weather <- weather_api(latitude = 39.7684, longitude = -86.1581)
 #'   str(weather)
 weather_api <- function(latitude, longitude) {
-  # Assertions are super important for any agent tool.
+  # Assertions are critical for any agent tool.
   stopifnot(
     is.numeric(latitude),
     length(latitude) == 1,
@@ -589,7 +589,7 @@ test_that("weather_api() rejects invalid coordinates", {
 ```
 
 The weather is always changing, so `weather_api()` will return different values at different times.
-This poses a problem for other types of tests, which is why `weather_api()` has an environment variable that lets us mock the API response with a stable fixture::
+This poses a problem for other types of tests, which is why `weather_api()` has an environment variable that lets us mock the API response with a stable fixture:
 
 ```{.r filename="app.R"}
   # Mock hook for shinytest2: when MOCK_WEATHER is set, return a stable
@@ -620,9 +620,9 @@ To set up the test:
 
 * Click "Expect Shiny values".
 * Enter the prompt "Call get_weather(latitude = 40, longitude = -80), then be completely silent."
-This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may produce errors, but if it does, the test failure will be obvious and can simply be retried.
+This tests the end-to-end flow of the AI model interaction, the tool calling, and Shiny output. The AI model may produce errors, but if it does, the test failure will be obvious and can simply be retried.
 * If a pop-up prompts you to record updates, click "Record".
-* After the leaflet app and weather data table populate, click "Expect Shiny values" again.
+* After the leaflet map and weather data table populate, click "Expect Shiny values" again.
 Your window should now look like this:
 
 ![Screenshot of the shinytest2 recording interface after test interactions, showing the populated leaflet map and weather data table along with recorded Shiny values.](./images/weather/test2.png)

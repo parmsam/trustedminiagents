@@ -10,16 +10,17 @@ The app interface looks like this:
 
 ![Screenshot of the clinical trial simulation agent Shiny app. The left sidebar shows an AI chat interface labeled "do not trust AI model output in here" with a user prompt describing a binary endpoint trial and the AI's response. The main panel displays two tables: "Design assumptions (HUMAN USER MUST REVIEW THIS)" showing simulation parameters for Power and Type I Error scenarios, and "Results (trusted given the assumptions)" showing efficacy probabilities of 0.65 and 0.04 for each scenario.](./images/simulation/app.png)
 
-The human user describes scenarios for a clinical trial design in natural language. 
-The AI model translates the human intent into rigorous simulation parameters. 
-The user reviews those assumptions in the table at the top. 
+The human user describes scenarios for a clinical trial design in natural language.
+The AI model translates the human intent into rigorous simulation parameters.
+The user reviews those assumptions in the table at the top.
 If we trust the simulation code, and if the assumptions represent the design the user wants, then we can trust the results.
 
 The AI model may generate erroneous scenarios, but those scenarios are easy for a human to check.
 Given good scenarios, AI-generated errors in the results are structurally impossible.
 
 This is where the trusted mini-agent pattern really shines.
-The AI model makes the process of conceiving and tuning clinical trial designs more effortless and productive. But because of the structure around the AI model, the question is no longer "do we trust these results?", it's "do these assumptions reflect the scenarios the user wants to simulate?"
+The AI model makes the process of conceiving and tuning clinical trial designs more effortless and productive.
+But because of the structure around the AI model, the question is no longer "do we trust these results?", it's "do these assumptions reflect the scenarios the user wants to simulate?"
 That second question is much easier for human users to verify.
 
 ## App design
@@ -64,9 +65,9 @@ If the simulation tools are correct and the assumptions reflect the design the u
 
 ## Potential future work: empowering the agent
 
-Modern agents don't just one-shot proposed ideas, they [loop](https://code.claude.com/docs/en/agent-sdk/agent-loop) over untrusted tools and take time to reason without interruption.
+Modern agents don't just one-shot proposed ideas; they [loop](https://code.claude.com/docs/en/agent-sdk/agent-loop) over untrusted tools and take time to reason without interruption.
 For example, extra tools could scrape [PubMed](https://pubmed.ncbi.nlm.nih.gov/) or [ClinicalTrials.gov](https://clinicaltrials.gov/) for relevant literature, and the queries could inform the simulation assumptions.
-These tools don't strictly need oversight because they don't directly produce critical results, they only inform the AI model's reasoning.
+These tools don't strictly need oversight because they don't directly produce critical results; they only inform the AI model's reasoning.
 Human oversight only needs to happen downstream, when inputs go into trusted tools that directly produce final results.
 
 ## Clinical trial simulation
@@ -84,7 +85,7 @@ The outcome measure of the trial is a continuous measurement taken on each patie
 We use simulation to estimate the probability that the trial declares efficacy.
 
 For each study arm (treatment and control), we assume values for the mean response, the standard deviation of responses, and the number of patients.
-We simulate many trials by sampling patient responses from the independent normal distributions, then we apply a frequentist hypothesis test to test efficacy in each simulated trial.
+We simulate many trials by sampling patient responses from independent normal distributions, then we apply a frequentist hypothesis test to assess efficacy in each simulated trial.
 The fraction of p-values below a given significance level is an estimate of the probability that the trial declares efficacy.
 
 For simplicity, we fix the pseudo-random number generation seed and the number of simulations.
@@ -148,7 +149,7 @@ simulate_trial_continuous <- function(
 ### Simulation 2: binary endpoints
 
 Simulation 2 is similar, but the endpoint is binary: each patient either has a favorable outcome (a response) or an unfavorable one under the randomized regimen (treatment or control).
-We simulate the number of responders in each arm from independent binomial distributions, then apply a test of proportions to see if the treatment response rate is significantly higher than that of the control group.
+We simulate the number of responders in each arm from independent binomial distributions, then we apply a test of proportions to see if the treatment response rate is significantly higher than that of the control group.
 
 ```{.r}
 #' @title Simulate a two-arm randomized controlled trial
@@ -216,7 +217,8 @@ We write an `ellmer` tool constructor for each simulation type.
 Each constructor accepts a Shiny reactive values list and returns an `ellmer` tool that can modify those reactive values.
 We assume two reactive values: a table of assumptions that the user will check, and a table of efficacy probabilities computed by the statistical content of the tools.
 
-Unlike the statistical functions above, these tools accept multiple design scenarios at a time. This is key for evaluating trade-offs in real-world clinical trial simulations.
+Unlike the statistical functions above, these tools accept multiple design scenarios at a time.
+This is key for evaluating trade-offs in real-world clinical trial simulations.
 To accomplish this, we use a custom wrapper around `ellmer::type_array()`:
 
 ```{.r}
@@ -967,7 +969,7 @@ To set up the test:
 
 * Click "Expect Shiny values".
 * Enter the prompt "Call simulate_trial_binary(scenario = 'Power', n_treatment = 100, n_control = 100, response_rate_treatment = 0.5, response_rate_control = 0.3, significance_level = 0.025), then be completely silent."
-This tests the end-to-end flow of the AI model interaction, the tool calling and Shiny output. The AI model may produce errors, but if it does, the test failure will be obvious and can simply be retried.
+This tests the end-to-end flow of the AI model interaction, the tool calling, and Shiny output. The AI model may produce errors, but if it does, the test failure will be obvious and can simply be retried.
 * If a pop-up prompts you to record updates, click "Record".
 * After the assumptions and results tables populate, click "Expect Shiny values" again.
 Your window should now look like this:

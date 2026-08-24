@@ -13,7 +13,7 @@ We introduce *trusted mini-agents*: least-privilege AI systems that engineer out
 A trusted mini-agent is an agent that obeys the following three rules:
 
 1. **Trusted tools directly produce all results.**
-2. **Each result only comes from one trusted tool.** 
+2. **Each result only comes from one trusted tool.**
 3. **Inputs to trusted tools have trusted human oversight.**
 
 ## Impact on users
@@ -71,7 +71,7 @@ Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains 
 :::
 
 After an initial prompt, the work begins with the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop).
-Here, the AI model ponders and delibererates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
+Here, the AI model ponders and deliberates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
 
 Ultimately, the AI model proposes inputs to one or more trusted tools that perform critical computations such as modeling and simulation.
 Those inputs reflect how the AI model frames up the problem and sets up an advanced computation.

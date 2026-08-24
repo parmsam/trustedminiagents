@@ -4,7 +4,7 @@ An [agent](https://en.wikipedia.org/wiki/AI_agent) is an artificial intelligence
 Because agents rely on [AI models](https://en.wikipedia.org/wiki/Large_language_model), they are vulnerable to unpredictable errors.
 A few of the most common types of errors include subtle misinterpretations of prompts, lack of alignment with the user, and confident fabrications called [hallucinations](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)).
 To develop an agent that controls AI errors, we first need to understand the relevant components of agents and how they work together.
-This chapter describes these concepts and lays the groundwork for trusted mini-agents in later chapters. 
+This chapter describes these concepts and lays the groundwork for trusted mini-agents in later chapters.
 
 ## AI models are not agents.
 
@@ -45,7 +45,7 @@ The [harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) is
 
 A tool is an external capability that the AI model can request to use.
 Tools empower the agent to perceive the world and act on it.
-Structrually, [a tool is a function combined with metadata.](https://youtu.be/ctc2kx3LxG8?t=2138)
+Structurally, [a tool is a function combined with metadata.](https://youtu.be/ctc2kx3LxG8?t=2138)
 
 $$
 \begin{aligned}

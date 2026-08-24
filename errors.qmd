@@ -98,7 +98,7 @@ sequenceDiagram
     end
 ```
 
-![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
+![① Reviewer sees this map.](./images/errors/leaflet.png)
 
 Sequence diagram showing Fix 1. The user asks "What's the weather in Chicago?" and an interactive map of Chicago with a pin is displayed for human review before calling get_weather(lat = 41.8, long = -87.6). The map helps the user verify the location input.
 :::
@@ -128,7 +128,7 @@ sequenceDiagram
     Tool->>User: {"temperature": 72, "weather": "Sunny"}
 ```
 
-![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
+![① Reviewer sees this map.](./images/errors/leaflet.png)
 
 Sequence diagram showing Fix 2. After the map confirms the location, `get_weather()` sends NWS weather data directly to the user interface instead of relaying it through the AI model. Bypassing the AI model for this step eliminates the risk of an erroneous weather report.
 :::
@@ -190,7 +190,7 @@ sequenceDiagram
     end
 ```
 
-![① Reviewer sees this map.](./images/hallucinations/leaflet.png)
+![① Reviewer sees this map.](./images/errors/leaflet.png)
 
 Sequence diagram showing Fix 3. After `get_weather()` sends NWS data directly to the user interface, no other tool besides `get_weather()` can produce weather data, and claims about weather data from the AI model are not trusted.
 :::

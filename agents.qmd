@@ -15,6 +15,8 @@ No statistical model makes perfect predictions, which is why LLMs [hallucinate](
 For example, suppose an LLM makes a prediction on this new dataset: "What's the weather in Chicago?"
 The LLM blindly pattern-matches text to accompany the new data, and this prediction could be wrong.
 
+::: {#fig-llm-hallucination}
+
 ```{mermaid}
 %%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63','noteBkgColor':'#F3F4F6','noteBorderColor':'#9CA3AF','noteTextColor':'#1F2937'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
@@ -27,6 +29,9 @@ sequenceDiagram
     note over User,LLM: Hallucination (wrong city)
     end
 ```
+
+Sequence diagram of a bare LLM hallucinating. The user asks about the weather in Chicago, but the LLM predicts a confident-sounding response with the Indianapolis weather instead.
+:::
 
 ## Agent = LLM + harness
 
@@ -104,6 +109,8 @@ The following [sequence diagram](https://en.wikipedia.org/wiki/Sequence_diagram)
   This simplified framing helps us build trusted mini-agents in later chapters.
 ]
 
+::: {#fig-weather-success}
+
 ```{mermaid}
 %%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#1F3A63','actorTextColor':'#ffffff','actorBorder':'#1F3A63'}, 'sequence': {'actorFontSize': 18}}}%%
 sequenceDiagram
@@ -117,10 +124,10 @@ sequenceDiagram
     LLM->>User: It's 72°F and sunny in Chicago.
 ```
 
-Control and information flow among the user, LLM, and tool.
-The harness brokers this flow.
-Think of the harness as the image background and the collection of horizontal arrows in the diagram.
-The background glues the components together, and each arrow converts an output from one component into an input to another.
+Sequence diagram of a complete, successful weather agent interaction. The harness brokers the flow between the user, LLM, and tool, and each arrow converts an output from one component into an input for the next: the user's question becomes a tool call, and the tool's result becomes the LLM's reply.
+:::
+
+The harness implicitly includes the horizontal arrows in the diagram.
 For example, the arrow labeled "get_weather(lat = 41.8, long = -87.6)" shows how the harness delivers the LLM-generated tool call to the tool itself.
 (The harness, not the LLM, actually runs tools.)
 Designing a trusted mini-agent is all about drawing the best arrows, as we will see in the [next chapter](hallucinations.qmd).

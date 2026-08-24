@@ -39,7 +39,7 @@ flowchart LR
     L --> T["get_weather()"]
     T --> RV["reactiveValues:<br>lat, long, weather"]
   end
-  subgraph Trusted after human oversight
+  subgraph Trusted on good inputs
     RV --> W["Weather data"]
   end
   subgraph Human oversight

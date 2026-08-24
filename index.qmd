@@ -32,7 +32,43 @@ which is much easier to verify.
 
 The trusted mini-agent workflow combines the power of modern agents with the safeguards of traditional software engineering:
 
-![Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains the LLM and Untrusted Tools connected by bidirectional arrows labeled "Autonomous reasoning." The agent loop sends "Proposed Inputs" rightward to a "Human Review" checkpoint, which can return "Rejected Proposals" back to the loop. After review, "Reviewed Inputs" flow right across a "Trust" boundary into "Trusted Tools," which perform "Nontrivial Computation" and produce "Trusted Results" below.](./images/hallucinations/flow.png)
+::: {#fig-workflow}
+
+```{mermaid}
+%%{init: {'theme':'base', 'themeVariables': {'lineColor':'#4B5563','edgeLabelBackground':'#ffffff'}}}%%
+flowchart LR
+    subgraph AgentLoop["Agent Loop"]
+        direction TB
+        LLM["LLM"]
+        UT["Untrusted<br>Tools"]
+        LLM -->|"Autonomous<br>reasoning"| UT
+        UT --> LLM
+    end
+
+    HR["Human<br>Review"]
+
+    subgraph Trust["Trust"]
+        direction TB
+        TT["Trusted<br>Tools"]
+        TR["Trusted<br>Results"]
+        TT -->|"Nontrivial<br>Computation"| TR
+    end
+
+    AgentLoop -->|"Proposed Inputs"| HR
+    HR -->|"Rejected Proposals"| AgentLoop
+    HR -->|"Reviewed Inputs"| TT
+
+    style LLM fill:#1F3A63,color:#ffffff,stroke:#1F3A63
+    style UT fill:#6B2020,color:#ffffff,stroke:#6B2020
+    style HR fill:#166534,color:#ffffff,stroke:#166534
+    style TT fill:#166534,color:#ffffff,stroke:#166534
+    style TR fill:#166534,color:#ffffff,stroke:#166534
+    style AgentLoop fill:#FDE8E8,stroke:#9CA3AF
+    style Trust fill:#F3F4F6,stroke:#9CA3AF
+```
+
+Flow diagram of a trusted mini-agent. On the left, an "Agent Loop" box contains the LLM and Untrusted Tools connected by bidirectional arrows labeled "Autonomous reasoning." The agent loop sends "Proposed Inputs" to a "Human Review" checkpoint, which can return "Rejected Proposals" back to the loop. After review, "Reviewed Inputs" flow into "Trusted Tools" inside the "Trust" boundary, which perform "Nontrivial Computation" and produce "Trusted Results" below.
+:::
 
 After an initial prompt, the work begins with the [agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop).
 Here, the LLM ponders and delibererates uninterrupted and unsupervised, potentially with the aid of untrusted tools (e.g. web search, back-of-the-envelope calculations, etc.) which are structurally incapable of producing final results.
@@ -58,7 +94,7 @@ No prior experience with [`ellmer`](https://ellmer.tidyverse.org/) or [`shinycha
 - [**Chapter 2: Controlling hallucinations.**](hallucinations.qmd) An overview of the trusted mini-agent pattern and how it controls hallucinations, featuring the concept for the weather agent in [Chapter 4](weather.qmd).
 - [**Chapter 3: A trusted mini-agent template.**](template.qmd) A minimal Shiny app that can be developed into a trusted mini-agent.
 - [**Chapter 4: Example: weather agent.**](weather.qmd) A full working trusted mini-agent that gets the weather.
-- [**Chapter 5: Example: clinical trial simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
+- [**Chapter 5: Example: simulation.**](simulation.qmd) A motivating example to show the practical usefulness of trusted mini-agents.
 
 ## Acknowledgements
 

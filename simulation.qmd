@@ -1,4 +1,4 @@
-# A real-world example in clinical trial simulation {#sec-simulation}
+# Example: simulation {#sec-simulation}
 
 Trusted mini-agents are not just for retrieving weather data.
 They are versatile systems with a wide range of practical uses in the real world.
@@ -21,6 +21,46 @@ Given good scenarios, hallucinated results are structurally impossible.
 This is where the trusted mini-agent pattern really shines.
 The large language model makes the process of conceiving and tuning clinical trial designs more effortless and productive. But because of the structure around the LLM, the question is no longer "do we trust these results?", it's "do these assumptions reflect the scenarios the user wants to simulate?"
 That second question is much easier for human users to verify.
+
+## App design
+
+The following diagram demonstrates the flow of control in the simulation app we are about to build.
+
+```{mermaid}
+flowchart LR
+  subgraph Untrusted due to the LLM
+    U["User input"] --> C["shinychat UI"]
+    C --> U
+    C --> L[ellmer chat]
+    L --> LLM
+    LLM --> L
+    L --> C
+  end
+  subgraph Trusted due to testing
+    L --> TC["simulate_trial_continuous()"]
+    L --> TB["simulate_trial_binary()"]
+    TC --> RV["reactiveValues:<br>assumptions, results"]
+    TB --> RV
+  end
+  subgraph Trusted on good inputs
+    RV --> R["Results data"]
+  end
+  subgraph Human oversight
+    RV --> A["Assumptions table of<br>LLM-generated trial scenarios"]
+  end
+```
+
+The user enters a prompt into the [`shinychat`](https://posit-dev.github.io/shinychat/r/) UI, and there is a flow of conversation between the user and the LLM.
+At its discretion, the LLM sends [`ellmer`](https://ellmer.tidyverse.org/) the text for a tool call (e.g. `simulate_trial_binary(...)`), at which point [`ellmer`](https://ellmer.tidyverse.org/) runs the tool call instead of simply relaying the text back to [`shinychat`](https://posit-dev.github.io/shinychat/r/).
+
+The simulation tools run the statistical functions with the LLM-supplied assumptions and write both the assumptions and the results to a [`reactiveValues()`](https://shiny.posit.co/r/reference/shiny/0.11/reactivevalues.html) list.
+**Crucially, the simulation tools are the only things that can write to those `reactiveValues()` slots.**
+The `reactiveValues()` list is just a repository: it can hold many different types of results, so multiple trusted tools — one per endpoint type — can deposit their outputs into it.
+**This constraint still enforces rule 2 (injectivity) of trusted mini-agents.**
+Each result that reaches the user originates from a designated, tested tool, never directly from the LLM or the user.
+
+The assumptions table renders the LLM-generated trial scenarios, so the user can check whether the LLM's translation of their query looks correct.
+If the simulation tools are correct and the assumptions reflect the design the user wants, then hallucinated results are structurally impossible.
 
 ## Potential future work: empowering the agent
 

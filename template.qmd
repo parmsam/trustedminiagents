@@ -1,4 +1,4 @@
-# Shiny template {#sec-template}
+# Agent template {#sec-template}
 
 Web applications are a great way to implement trusted mini-agents because
 the developer has complete control of both the frontend and backend.

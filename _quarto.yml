@@ -8,14 +8,21 @@ book:
   title: "Trusted Mini-Agents"
   subtitle: "Engineering AI Errors Out of Agentic Workflows"
   author: "Will Landau"
-  date: today
+  date: 2026-08-28
+  site-url: https://trustedminiagents.dev
+  description: >
+    A book about how to engineer AI errors out of agentic workflows.
+    Includes human-in-the-loop guardrails
+    and agentic workflows in R and Shiny.
+  open-graph: true
+  twitter-card: true
   search: true
   repo-url: https://github.com/wlandau/trustedminiagents
   repo-actions: [edit]
   repo-branch: main
   sidebar:
     style: docked
-    logo: logo/240x277.png
+    logo: logo/1810x2090.png
   page-footer:
     left: "© 2026 Eli Lilly and Company"
   chapters:
@@ -33,6 +40,7 @@ book:
 
 format:
   html:
+    canonical-url: true
     favicon: logo/favicon.png
     theme: cosmo
     css: styles.css

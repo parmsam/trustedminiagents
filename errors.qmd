@@ -1,3 +1,9 @@
+---
+description: >
+  How AI errors propagate through agent harnesses, shown by hardening
+  an example weather agent against them.
+---
+
 # AI errors {#sec-errors}
 
 This chapter explores the downstream consequences of AI errors in agent harnesses, and it shows how to harden an example weather agent against such errors.

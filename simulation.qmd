@@ -1,3 +1,9 @@
+---
+description: >
+  A worked example of a trusted mini-agent for clinical trial simulation,
+  turning natural-language trial descriptions into human-reviewed designs.
+---
+
 # Example: simulation {#sec-simulation}
 
 Trusted mini-agents are not just for retrieving weather data.

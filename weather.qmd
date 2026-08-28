@@ -1,3 +1,9 @@
+---
+description: >
+  A worked example that adds tools to the Shiny template, building a
+  complete trusted mini-agent for checking city weather.
+---
+
 # Example: weather agent {#sec-weather}
 
 This chapter builds on the template in [the previous chapter](template.qmd) and shows how to add tools to a trusted mini-agent in a Shiny app.

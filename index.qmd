@@ -1,3 +1,8 @@
+---
+description: >
+  An introduction to trusted mini-agents: least-privilege AI systems
+  that engineer AI errors out of high-stakes agentic workflows.
+---
 
 # Introduction {.unnumbered}
 

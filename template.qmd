@@ -1,3 +1,9 @@
+---
+description: >
+  A reusable Shiny app template in R for building trusted mini-agents
+  with the ellmer package.
+---
+
 # Agent template {#sec-template}
 
 Web applications are a great way to implement trusted mini-agents because

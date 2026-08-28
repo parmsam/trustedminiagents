@@ -1,3 +1,9 @@
+---
+description: >
+  A breakdown of how AI agents work and why their reliance on AI models
+  makes them prone to errors like hallucinations and misalignment.
+---
+
 # Deconstructing agents {#sec-agents}
 
 An [agent](https://en.wikipedia.org/wiki/AI_agent) is an artificial intelligence system that interacts with its environment, pursues goals, and takes actions.

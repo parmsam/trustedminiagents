@@ -1,3 +1,9 @@
+---
+description: >
+  The formal definition of a trusted mini-agent and its three core
+  rules, grounded in the weather agent example and simple mathematical concepts.
+---
+
 # The formal definition {#sec-definition}
 
 Building on the intuition from the [previous chapter](errors.qmd), this chapter formalizes the concept of trusted mini-agents.

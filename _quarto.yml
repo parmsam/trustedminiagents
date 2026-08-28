@@ -11,7 +11,7 @@ book:
   date: 2026-08-28
   site-url: https://trustedminiagents.dev
   description: >
-    A book about how to engineer AI errors out of agentic workflows.
+    A guide to engineering AI errors out of agentic workflows.
     Includes human-in-the-loop guardrails
     and agentic workflows in R and Shiny.
   open-graph: true

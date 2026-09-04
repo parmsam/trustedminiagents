@@ -548,8 +548,6 @@ Mocking allows us to test the rest of the app in a near-deterministic way with S
 An example test, run with `MOCK_WEATHER` set, drives the chat input and waits for the map and table to populate:
 
 ```{.python filename="tests/test_app.py"}
-import os
-
 from playwright.sync_api import Page
 from shiny.playwright import controller
 from shiny.run import ShinyAppProc
@@ -557,7 +555,6 @@ from shinychat.playwright import ChatController
 
 
 def test_weather_app(page: Page, app: ShinyAppProc):
-    os.environ["MOCK_WEATHER"] = "true"
     page.goto(app.url)
 
     chat = ChatController(page, "chat")
@@ -573,21 +570,30 @@ def test_weather_app(page: Page, app: ShinyAppProc):
 ```
 
 The `app` fixture above comes from `shiny.pytest`, which starts (and tears down) a local instance of `app.py` for the test to drive.
-Register it once in a `conftest.py` at the project root:
+Since the app runs as a subprocess, set `MOCK_WEATHER` in `conftest.py` before the fixture starts it, not inside the test body, where it would be too late to take effect:
 
 ```{.python filename="tests/conftest.py"}
+import os
+
+os.environ["MOCK_WEATHER"] = "true"
+
 from shiny.pytest import create_app_fixture
 
 app = create_app_fixture("../app.py")
 ```
 
-Run the tests with `python -m pytest` (rather than bare `pytest`) from the project root.
-`app.py` sits at the project root with no package installed, so `python -m pytest` is what puts that root directory on `sys.path`, letting `tests/test_weather_api.py`'s `from app import weather_api` resolve; plain `pytest` does not guarantee this.
-Shiny's [end-to-end testing guide](https://shiny.posit.co/py/docs/end-to-end-testing.html) covers additional `conftest.py` options (e.g. pointing at a different app path, or reusing one running app across tests).
+Since `app.py` and the `tests/` directory are siblings, add a `pyproject.toml` so `pytest` can resolve `from app import weather_api`:
+
+```{.toml filename="pyproject.toml"}
+[tool.pytest.ini_options]
+pythonpath = ["."]
+```
+
+See `create_app_fixture()`'s [API reference](https://shiny.posit.co/py/api/testing/pytest.create_app_fixture.html) for other options, like reusing one running app across a test module or parametrizing over multiple app paths.
 The tests require authentication into the AI model, but they can run without a visible browser window in headless mode.
 
 ```{.bash}
-$ MOCK_WEATHER=true python -m pytest
+$ pytest
 ================= test session starts =================
 collected 10 items
 

@@ -4,7 +4,7 @@ description: >
   with the chatlas package.
 ---
 
-# Agent template (Python) {#sec-template-py}
+# Agent template {#sec-template-py}
 
 Web applications are a great way to implement trusted mini-agents because
 the developer has complete control of both the frontend and backend.
@@ -24,6 +24,7 @@ At minimum, we use these Python packages to implement Shiny-based trusted mini-a
 | [`chatlas`](https://posit-dev.github.io/chatlas/) | AI model chat client with tool registration and streaming. |
 | [`shinychat`](https://posit-dev.github.io/shinychat/py/) | Drop-in chat UI for Shiny that binds to a `chatlas` chat client. |
 | [`shiny`](https://shiny.posit.co/py/) | Web application framework. Bundles Bootstrap-based UI components (`page_sidebar`, cards, layouts) by default, so no separate theming package like `bslib` is required. |
+| [`python-dotenv`](https://pypi.org/project/python-dotenv/) | Loads credentials such as `ANTHROPIC_API_KEY` from a local `.env` file into the environment, so API keys never appear in source code. |
 
 ## The template app
 
@@ -48,8 +49,18 @@ This compartmentalization will be useful when we add [tools](weather-py.qmd) and
 
 We use [`ChatAnthropic()`](https://posit-dev.github.io/chatlas/reference/ChatAnthropic.html) in this example, but any [chat client](https://posit-dev.github.io/chatlas/reference/index.html#chat-model-providers) will do.
 
+`ChatAnthropic()` reads the `ANTHROPIC_API_KEY` environment variable automatically, so the API key never needs to appear in source code.
+Following [`chatlas`'s recommended pattern](https://posit-dev.github.io/chatlas/reference/ChatAnthropic.html#note), we keep the key in a local `.env` file (excluded from version control) and load it with [`python-dotenv`](https://pypi.org/project/python-dotenv/):
+
+```{.bash filename=".env"}
+ANTHROPIC_API_KEY=...
+```
+
 ```{.python}
 from chatlas import ChatAnthropic
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def new_chat():
@@ -104,8 +115,11 @@ This `app.py` script is a blank template to help you begin implementing your own
 
 ```{.python filename="app.py"}
 from chatlas import ChatAnthropic
+from dotenv import load_dotenv
 from shiny import App, ui
 from shinychat import Chat, chat_ui
+
+load_dotenv()
 
 
 def new_chat():
